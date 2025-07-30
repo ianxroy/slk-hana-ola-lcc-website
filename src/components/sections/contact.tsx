@@ -31,6 +31,7 @@ const ContactFormSchema = z.object({
     required_error: "You need to select an interest.",
   }),
   message: z.string().min(1, { message: "Message is required." }),
+  honeypot: z.string().optional(), // Honeypot field
 });
 
 type ContactSectionProps = {
@@ -53,12 +54,25 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
       email: "",
       phone: "",
       message: "",
+      honeypot: "",
     },
   });
 
   const { toast } = useToast();
 
   async function onSubmit(data: z.infer<typeof ContactFormSchema>) {
+    // 1. Honeypot check
+    if (data.honeypot) {
+      console.log("Honeypot field filled, likely spam.");
+      // You can either silently fail or show a generic success message
+      // to avoid letting the bot know it was caught.
+      toast({
+            title: "Form Submitted!",
+            description: "Thank you for your message. We will get back to you shortly.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
@@ -141,6 +155,19 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
             {isClient && (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {/* Honeypot Field: Hidden from users, visible to bots */}
+                <FormField
+                  control={form.control}
+                  name="honeypot"
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <FormLabel>Please leave this field blank</FormLabel>
+                      <FormControl>
+                        <Input autoComplete="off" tabIndex={-1} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="name"
