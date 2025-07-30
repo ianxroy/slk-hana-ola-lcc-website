@@ -210,7 +210,7 @@ export default function LoginPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
-                    <Input id="login-password" type="password" {...registerForm.register('password')} />
+                    <Input id="login-password" type="password" {...loginForm.register('password')} />
                      {loginForm.formState.errors.password && <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>}
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
