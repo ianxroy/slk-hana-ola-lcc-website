@@ -9,6 +9,7 @@ import { z } from 'zod';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  User,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
@@ -46,6 +47,32 @@ const registerSchema = z.object({
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
+// This function creates the user document in Firestore after successful authentication.
+const createUserDocument = async (user: User, fullName: string, phone: string) => {
+    // Check if this is the first user to register
+    const usersCollectionRef = collection(db, 'users');
+    const q = query(usersCollectionRef, limit(1));
+    const querySnapshot = await getDocs(q);
+    const isFirstUser = querySnapshot.empty;
+
+    const role = isFirstUser ? 'admin' : 'employee';
+    const status = isFirstUser ? 'approved' : 'pending';
+    
+    // Create a user document in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        fullName: fullName,
+        phone: phone,
+        role: role,
+        status: status,
+        createdAt: new Date(),
+    });
+
+    return { role, status };
+};
+
+
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +99,6 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
-      // Check user status in Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
@@ -114,12 +140,6 @@ export default function LoginPage() {
     setError(null);
     setSuccessMessage(null);
     try {
-      // Check if there are any users already
-      const usersCollectionRef = collection(db, 'users');
-      const q = query(usersCollectionRef, limit(1));
-      const querySnapshot = await getDocs(q);
-      const isFirstUser = querySnapshot.empty;
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
@@ -127,26 +147,18 @@ export default function LoginPage() {
       );
       const user = userCredential.user;
 
-      const role = isFirstUser ? 'admin' : 'employee';
-      const status = isFirstUser ? 'approved' : 'pending';
-      const message = isFirstUser
+      // Now that the user is created and authenticated, create their Firestore document.
+      const { role, status } = await createUserDocument(user, data.fullName, data.phone);
+
+      const message = status === 'approved'
         ? 'Admin registration successful! You are the first user, so you have been made an admin. You can now log in.'
         : 'Registration successful! Please wait for an administrator to approve your account.';
-
-
-      // Create a user document in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: data.email,
-        fullName: data.fullName,
-        phone: data.phone,
-        role: role,
-        status: status,
-        createdAt: new Date(),
-      });
       
       setSuccessMessage(message);
       registerForm.reset();
+
+      // Since the user is technically logged in after creation, sign them out.
+      await auth.signOut();
 
     } catch (error: any) {
         if (error.code === 'auth/email-already-in-use') {
