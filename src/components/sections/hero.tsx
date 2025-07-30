@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section id="home" className="scroll-animate h-screen snap-start w-full bg-light-green/20 flex flex-col items-center justify-center">
+    <section id="home" className="scroll-animate min-h-screen snap-start w-full bg-light-green/20 flex flex-col items-center justify-center py-12 md:py-24">
       <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:px-6 lg:py-24">
         <div className="relative w-full max-w-4xl">
           <div className="overflow-hidden rounded-xl shadow-2xl">
