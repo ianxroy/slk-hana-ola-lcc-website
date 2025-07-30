@@ -24,7 +24,7 @@ const mockBanners = [
     ctaLink: "/employment",
     badge: "Careers",
     badgeVariant: "secondary",
-    image: "https://placehold.co/1200x600.png",
+    image: "https://placehold.co/1200x300.png",
     imageHint: "caregiver helping elderly"
   },
   {
@@ -36,7 +36,7 @@ const mockBanners = [
     ctaLink: "/contact",
     badge: "Limited Time Offer",
     badgeVariant: "default",
-    image: "https://placehold.co/1200x600.png",
+    image: "https://placehold.co/1200x300.png",
     imageHint: "friendly consultation"
   },
   {
@@ -47,12 +47,12 @@ const mockBanners = [
     ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick",
     badge: "Trusted",
     badgeVariant: "destructive",
-    image: "https://placehold.co/1200x600.png",
+    image: "https://placehold.co/1200x300.png",
     imageHint: "quality seal"
   },
   {
     id: "4",
-    image: "https://placehold.co/1200x600.png",
+    image: "https://placehold.co/1200x300.png",
     imageHint: "happy family",
     ctaLink: "/about",
   }
@@ -96,13 +96,16 @@ export function PromoBanner() {
                                 )}
                             </div>
                         )}
-                        <div className="group overflow-hidden rounded-lg shadow-lg max-h-[350px]">
+                        <div className={cn(
+                          "group overflow-hidden rounded-lg shadow-lg",
+                          !hasTextContent && "col-span-full"
+                        )}>
                           <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
                             <Image
                               src={banner.image}
                               alt={banner.title || 'Promotional Banner'}
                               width={1200}
-                              height={600}
+                              height={300}
                               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                               data-ai-hint={banner.imageHint}
                             />
