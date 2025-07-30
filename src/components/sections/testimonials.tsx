@@ -92,7 +92,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                         <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
-                        <CardTitle className="text-lg font-bold animate-text-reveal">{testimonial.name}</CardTitle>
+                        <CardTitle className="text-lg font-bold">{testimonial.name}</CardTitle>
                         <div className="flex items-center gap-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                             <Star
