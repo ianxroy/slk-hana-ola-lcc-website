@@ -42,6 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const unsubscribe = onSnapshot(userDocRef, async (userDoc) => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          // We only set the profile if they are approved.
+          // The login page handles redirecting pending/rejected users.
+          // This prevents a logged-in but unapproved user from accessing authenticated routes.
           if (userData.status === 'approved') {
             setUserProfile({
                 uid: firebaseUser.uid,
@@ -52,15 +55,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 photoURL: firebaseUser.photoURL
             });
           } else {
-            // User is pending or rejected, sign them out client-side if they manage to get here
+            // User is not approved, so sign them out client-side as a safeguard.
             await auth.signOut();
             setUserProfile(null);
           }
         } else {
-            // User doc doesn't exist, which can happen right after registration
-            // The login page handles this, but as a safeguard, we sign out.
-            await auth.signOut();
-            setUserProfile(null);
+            // This can happen briefly after registration before the doc is created.
+            // Await a bit, but if it's still not there, sign out.
+            setTimeout(async () => {
+                const checkAgain = await getDoc(doc(db, 'users', firebaseUser.uid));
+                if (!checkAgain.exists()) {
+                    await auth.signOut();
+                    setUserProfile(null);
+                }
+            }, 1000);
         }
         setProfileLoading(false);
       }, (error) => {

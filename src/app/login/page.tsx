@@ -78,7 +78,8 @@ export default function LoginPage() {
         const userData = userDoc.data();
         if (userData.status === 'pending') {
           await auth.signOut();
-          throw new Error('Your account is pending approval. Please contact an administrator.');
+          router.push('/registration-pending');
+          return;
         }
         if (userData.status === 'rejected') {
           await auth.signOut();
@@ -206,7 +207,7 @@ export default function LoginPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="login-password">Password</Label>
-                    <Input id="login-password" type="password" {...loginForm.register('password')} />
+                    <Input id="login-password" type="password" {...registerForm.register('password')} />
                      {loginForm.formState.errors.password && <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>}
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
