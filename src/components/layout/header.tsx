@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, React } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,6 @@ const navLinks = [
   { href: '#services', label: 'Services' },
   { href: '#employment', label: 'Employment' },
   { href: '#contact', label: 'Contact Us' },
-  { href: '#footer', label: 'Footer' },
 ];
 
 export function Header() {
