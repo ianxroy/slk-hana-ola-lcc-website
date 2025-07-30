@@ -8,6 +8,17 @@ import { db, storage } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -113,7 +124,6 @@ export function PromoManagement() {
   };
   
   const handleDelete = async (promoId: string) => {
-      if (!window.confirm("Are you sure you want to delete this promotion?")) return;
       try {
           await deleteDoc(doc(db, "promotions", promoId));
           toast({ title: "Success", description: "Promotion deleted."});
@@ -192,7 +202,23 @@ export function PromoManagement() {
                         </div>
                         <div className="flex items-center gap-2">
                              <Button variant="outline" size="icon" onClick={() => openDialog(promo)}><Edit className="h-4 w-4"/></Button>
-                             <Button variant="destructive" size="icon" onClick={() => handleDelete(promo.id)}><Trash2 className="h-4 w-4"/></Button>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" size="icon"><Trash2 className="h-4 w-4"/></Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete this promotion.
+                                    </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(promo.id)}>Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 ))

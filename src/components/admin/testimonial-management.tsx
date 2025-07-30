@@ -8,6 +8,17 @@ import { db, storage } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -121,7 +132,6 @@ export function TestimonialManagement() {
   };
   
   const handleDelete = async (testimonialId: string) => {
-      if (!window.confirm("Are you sure you want to delete this testimonial?")) return;
       try {
           await deleteDoc(doc(db, "testimonials", testimonialId));
           toast({ title: "Success", description: "Testimonial deleted."});
@@ -201,14 +211,30 @@ export function TestimonialManagement() {
                                 <p className="text-sm text-muted-foreground truncate max-w-sm">"{testimonial.quote}"</p>
                                 <div className="flex items-center gap-0.5">
                                     {Array.from({ length: 5 }).map((_, i) => (
-                                        <Star key={i} className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}/>
+                                        <Star key={i} className={`star h-4 w-4 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}/>
                                     ))}
                                 </div>
                              </div>
                         </div>
                         <div className="flex items-center gap-2">
                              <Button variant="outline" size="icon" onClick={() => openDialog(testimonial)}><Edit className="h-4 w-4"/></Button>
-                             <Button variant="destructive" size="icon" onClick={() => handleDelete(testimonial.id)}><Trash2 className="h-4 w-4"/></Button>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" size="icon"><Trash2 className="h-4 w-4"/></Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete this testimonial.
+                                    </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(testimonial.id)}>Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 ))
