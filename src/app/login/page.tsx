@@ -1,14 +1,15 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, addDoc, query, where, getDocs, limit } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, query, where, getDocs, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -47,9 +48,10 @@ const registerSchema = z.object({
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -61,8 +63,18 @@ export default function LoginPage() {
     defaultValues: { fullName: '', email: '', phone: '', password: '' },
   });
 
+  useEffect(() => {
+    if (!authLoading && user) {
+        if (user.role === 'admin') {
+            router.push('/admin');
+        } else {
+            router.push('/dashboard');
+        }
+    }
+  }, [user, authLoading, router]);
+
   const handleLogin = async (data: z.infer<typeof loginSchema>) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setError(null);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
@@ -78,14 +90,8 @@ export default function LoginPage() {
             title: 'Login Successful',
             description: "Welcome back!",
           });
-          
-          if (userData.role === 'admin') {
-            router.push('/admin');
-          } else {
-            router.push('/dashboard');
-          }
+          // Redirection will be handled by the useEffect hook
         } else {
-            // This case shouldn't be hit if only approved users are in the 'users' collection
             await auth.signOut();
             throw new Error('Your account is not approved. Please contact an administrator.');
         }
@@ -101,16 +107,15 @@ export default function LoginPage() {
             setError(error.message);
         }
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleRegister = async (data: z.infer<typeof registerSchema>) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setError(null);
 
     try {
-        // 1. Check if email already exists in 'users' or 'registrationRequests'
         const usersQuery = query(collection(db, "users"), where("email", "==", data.email), limit(1));
         const registrationRequestsQuery = query(collection(db, "registrationRequests"), where("email", "==", data.email), limit(1));
 
@@ -127,27 +132,32 @@ export default function LoginPage() {
             throw new Error("A registration request for this email address is already pending approval.");
         }
 
-
-      // 2. Add registration request to Firestore
       const requestsCollectionRef = collection(db, 'registrationRequests');
       await addDoc(requestsCollectionRef, {
         email: data.email,
         fullName: data.fullName,
         phone: data.phone,
-        password: data.password, // Storing password temporarily. This is not ideal for production.
+        password: data.password, 
         status: 'pending',
         createdAt: new Date(),
       });
       
-      // 3. Redirect to pending page
       router.push('/registration-pending');
 
     } catch (error: any) {
         setError(error.message || "An unexpected error occurred during registration.");
     } finally {
-        setIsLoading(false);
+        setIsSubmitting(false);
     }
 };
+
+  if (authLoading || user) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -185,8 +195,8 @@ export default function LoginPage() {
                     <Input id="login-password" type="password" {...loginForm.register('password')} />
                      {loginForm.formState.errors.password && <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>}
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Login
                   </Button>
                 </form>
@@ -230,8 +240,8 @@ export default function LoginPage() {
                     <Input id="register-password" type="password" {...registerForm.register('password')} />
                     {registerForm.formState.errors.password && <p className="text-sm text-destructive">{registerForm.formState.errors.password.message}</p>}
                   </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Register
                   </Button>
                 </form>
