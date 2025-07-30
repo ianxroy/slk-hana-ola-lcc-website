@@ -43,11 +43,11 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
              <GsapScrollAnimator>
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="mx-auto max-w-3xl text-center space-y-4 mb-12">
-                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl scroll-animate">Our Services</h2>
-                        <p className="text-lg text-foreground/80 scroll-animate">
+                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-text-reveal">Our Services</h2>
+                        <p className="text-lg text-foreground/80 animate-fade-in-up">
                             Because we are committed to your good health...
                         </p>
-                        <p className="text-base text-foreground/80 scroll-animate">
+                        <p className="text-base text-foreground/80 animate-fade-in-up">
                             SLK Hana Ola, LLC offers the following services regardless of race, age, color, creed, sex, national origin, ancestry, religion, disability, marital status or sexual orientation.
                         </p>
                     </div>
@@ -65,20 +65,20 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
                                             data-ai-hint={service.imageHint}
                                         />
                                     </div>
-                                    <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 scroll-animate">{service.title}</CardTitle>
+                                    <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-text-reveal">{service.title}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex-grow">
-                                    <p className="text-base scroll-animate">{service.description}</p>
+                                    <p className="text-base animate-fade-in-up">{service.description}</p>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                     <div className="mt-12 text-center">
-                         <p className="text-xl font-bold text-primary pt-6 scroll-animate">
+                         <p className="text-xl font-bold text-primary pt-6 animate-fade-in-up">
                             OUR PROFESSIONAL TEAM IS READY TO ASSIST AND PROVIDE EXCEPTIONAL SERVICES
                        </p>
                        {isPreview && (
-                           <div className="text-center mt-8 scroll-animate">
+                           <div className="text-center mt-8 animate-fade-in-up">
                                <Button asChild size="lg" variant="secondary">
                                    <Link href="/services">View All Services</Link>
                                </Button>
