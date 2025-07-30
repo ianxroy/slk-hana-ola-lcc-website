@@ -90,7 +90,9 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
           ease: 'back.out(1.7)',
           scrollTrigger: {
             trigger: container,
-            ...commonScrollTrigger
+            start: 'top 50%',
+            end: 'bottom 30%',
+            toggleActions: 'play reverse play reverse',
           }
         });
       });
