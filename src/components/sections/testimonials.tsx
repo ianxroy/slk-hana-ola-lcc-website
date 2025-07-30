@@ -54,11 +54,11 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                   </Avatar>
                   <div>
                   <CardTitle className="text-lg font-bold animate-fade-in-up">{testimonial.name}</CardTitle>
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-0.5 animate-stars">
                       {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                           key={i}
-                          className={`h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
+                          className={`star h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
                       />
                       ))}
                   </div>

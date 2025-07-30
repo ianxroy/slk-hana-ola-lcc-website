@@ -19,7 +19,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
     const ctx = gsap.context(() => {
       const commonScrollTrigger = {
         start: 'top 80%', // Start animation when element top hits 80% from viewport top
-        end: 'bottom 20%', // End animation when element bottom hits 20% from viewport top
+        end: 'bottom 30%', // End animation when element bottom hits 20% from viewport top
         toggleActions: 'play reverse play reverse',
       };
       
@@ -79,6 +79,21 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
                 },
             });
         });
+
+      // Star animation
+      const starContainers = gsap.utils.toArray<HTMLElement>('.animate-stars');
+      starContainers.forEach((container) => {
+        const stars = gsap.utils.toArray<HTMLElement>('.star', container);
+        gsap.from(stars, {
+          scale: 0,
+          stagger: 0.1,
+          ease: 'back.out(1.7)',
+          scrollTrigger: {
+            trigger: container,
+            ...commonScrollTrigger
+          }
+        });
+      });
 
 
     }, containerRef);
