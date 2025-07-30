@@ -10,11 +10,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['PT Sans', 'sans-serif'],
+        headline: ['Playfair Display', 'serif'],
         code: ['monospace'],
       },
       colors: {
+        'yellow-orange': '#FFCC4D',
+        'light-green': '#C4EA8A',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
