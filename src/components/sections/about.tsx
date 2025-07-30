@@ -12,7 +12,7 @@ export function AboutSection({ isPreview = false }: AboutSectionProps) {
         <section id="about" className="w-full bg-background py-12 md:py-24">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="mx-auto max-w-3xl text-center space-y-4">
-                    <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-fade-in-up">About SLK Hana Ola</h2>
+                    <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-text-reveal">About SLK Hana Ola</h2>
                     <p className="text-lg font-semibold text-primary animate-fade-in-up">TO PROMOTE, PROTECT AND ADVANCE THE HIGHEST QUALITY HEALTHCARE AT HOME</p>
                 </div>
                 <div className="mt-12 text-base text-foreground/80 text-center max-w-4xl mx-auto space-y-8">
@@ -49,7 +49,7 @@ export function AboutSection({ isPreview = false }: AboutSectionProps) {
                                         data-ai-hint="compassionate caregiver"
                                     />
                                 </div>
-                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-fade-in-up">OUR MISSION</CardTitle>
+                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-text-reveal">OUR MISSION</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-left text-base animate-fade-in-up">To respectfully and compassionately meet the needs of our clients and their families by listening, planning, educating and delivering the highest quality of individualized home healthcare.</p>
@@ -67,7 +67,7 @@ export function AboutSection({ isPreview = false }: AboutSectionProps) {
                                         data-ai-hint="independent senior"
                                     />
                                 </div>
-                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-fade-in-up">OUR VISION</CardTitle>
+                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-text-reveal">OUR VISION</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-left text-base animate-fade-in-up">Our strategic vision is to create and sustain a leading high quality home care service that supports individuals to live as independently as possible in the comfort of their own homes. We personalize our services to meet your situation respectfully, efficiently, and compassionately, fostering independence, preserving dignity and improving quality of life.</p>
