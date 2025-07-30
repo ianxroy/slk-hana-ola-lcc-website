@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,16 +20,9 @@ import { useToast } from "@/hooks/use-toast";
 import React from 'react';
 import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
 import Link from "next/link";
-
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  phone: z.string().min(1, { message: "Phone number is required." }),
-  interest: z.enum(["services", "employment"], {
-    required_error: "You need to select an interest.",
-  }),
-  message: z.string().min(1, { message: "Message is required." }),
-});
+import { submitContactForm } from "@/ai/flows/contact-flow";
+import { ContactFormInputSchema } from "@/ai/flows/contact-schema";
+import { Loader2 } from "lucide-react";
 
 type ContactSectionProps = {
     isPreview?: boolean;
@@ -36,14 +30,15 @@ type ContactSectionProps = {
 
 export function ContactSection({ isPreview = false }: ContactSectionProps) {
     const [isClient, setIsClient] = React.useState(false);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
     React.useEffect(() => {
         setIsClient(true);
     }, []);
     
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof ContactFormInputSchema>>({
+    resolver: zodResolver(ContactFormInputSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -54,13 +49,29 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
 
   const { toast } = useToast();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    toast({
-      title: "Form Submitted!",
-      description: "Thank you for your message. We will get back to you shortly.",
-    });
-    console.log(data);
-    form.reset();
+  async function onSubmit(data: z.infer<typeof ContactFormInputSchema>) {
+    setIsSubmitting(true);
+    try {
+        const result = await submitContactForm(data);
+        if (result.success) {
+            toast({
+                title: "Form Submitted!",
+                description: "Thank you for your message. We will get back to you shortly.",
+            });
+            form.reset();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: "There was an error submitting your form. Please try again later.",
+        });
+        console.error("Form submission error:", error);
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   return (
@@ -192,8 +203,9 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" size="lg" className="w-full hover:bg-yellow-orange">
-                  Send Message
+                <Button type="submit" size="lg" className="w-full hover:bg-yellow-orange" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
                  {isPreview && (
                     <div className="text-center mt-4">
