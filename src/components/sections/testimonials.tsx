@@ -23,7 +23,7 @@ const testimonials = [
   {
     name: "Mike R.",
     avatar: "MR",
-    rating: 5,
+    rating: 4,
     quote: "Their personalized care plan was exactly what we needed. The staff is friendly and always goes the extra mile. Highly recommended!",
     imageHint: "content person"
   }
