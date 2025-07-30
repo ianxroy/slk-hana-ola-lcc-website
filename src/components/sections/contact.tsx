@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -48,7 +48,7 @@ export function ContactSection() {
     form.reset();
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY';
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   return (
     <section
@@ -68,14 +68,20 @@ export function ContactSection() {
               </p>
             </div>
             <div className="w-full h-[400px] overflow-hidden rounded-lg shadow-lg">
-              <iframe
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                style={{ border: 0 }}
-                src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=21.399840439194396,-158.02250355092343`}
-                allowFullScreen
-              ></iframe>
+              {apiKey ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=21.399840439194396,-158.02250355092343`}
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                  Google Maps API Key is missing.
+                </div>
+              )}
             </div>
           </div>
           <div className="mx-auto w-full max-w-md">
