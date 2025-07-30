@@ -71,9 +71,14 @@ export function Footer() {
            </div>
         </div>
 
-        <div className="mt-12 border-t border-background/20 pt-8 text-center text-base">
+        <div className="mt-12 border-t border-background/20 pt-8 text-center text-base space-y-2">
           <p>&copy;{new Date().getFullYear()} SLK Hana Ola, LLC | All Rights Reserved</p>
-          <p>Designed and Hosted by <a href="https://hanteck.online" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Hanteck</a></p>
+          <p>
+            Designed by <a href="https://hanteck.online" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Ian Roy Barcelona (Hanteck)</a>
+          </p>
+          <p>
+            <Link href="/credits" className="text-sm underline hover:text-primary">View Credits</Link>
+          </p>
         </div>
       </div>
     </footer>
