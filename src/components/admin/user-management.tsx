@@ -8,15 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Copy, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface RegistrationRequest {
   id: string;
   email: string;
   fullName: string;
   phone: string;
-  password?: string;
+  // password is intentionally not stored or retrieved for security
   role: 'admin' | 'employee';
   status: 'pending' | 'rejected';
   createdAt: {
@@ -24,6 +25,34 @@ interface RegistrationRequest {
     nanoseconds: number;
   };
 }
+
+const TempPasswordDisplay = ({ password }: { password: string }) => {
+  const { toast } = useToast();
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(password);
+    toast({ title: 'Copied!', description: 'Temporary password copied to clipboard.' });
+  };
+
+  return (
+    <div className="mt-4">
+        <Alert>
+            <AlertTitle>User Approved!</AlertTitle>
+            <AlertDescription>
+                <div className="space-y-2">
+                    <p>Please provide the user with their temporary password:</p>
+                    <div className="flex items-center gap-2">
+                        <code className="font-mono p-2 bg-muted rounded-md text-sm">{password}</code>
+                        <Button variant="ghost" size="icon" onClick={copyToClipboard}>
+                           <Copy className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            </AlertDescription>
+        </Alert>
+    </div>
+  );
+};
+
 
 export function UserManagement() {
   const { toast } = useToast();
@@ -37,11 +66,12 @@ export function UserManagement() {
       const requestsCollection = collection(db, 'registrationRequests');
       const q = query(requestsCollection, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      const requestsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        role: 'employee', // Default role
-      })) as RegistrationRequest[];
+      const requestsData = querySnapshot.docs
+        .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            role: 'employee', // Default role
+        })) as RegistrationRequest[];
       setRequests(requestsData);
     } catch (error) {
       console.error('Error fetching registration requests:', error);
@@ -66,13 +96,7 @@ export function UserManagement() {
   const handleReject = async (id: string) => {
     setIsProcessing(id);
     try {
-      // Option 1: Just delete the request
       await deleteDoc(doc(db, "registrationRequests", id));
-
-      // Option 2: Mark as rejected (if you want to keep a record)
-      // const requestDocRef = doc(db, 'registrationRequests', id);
-      // await updateDoc(requestDocRef, { status: 'rejected' });
-      
       toast({
         title: 'Success',
         description: 'Registration request has been rejected.',
@@ -92,6 +116,9 @@ export function UserManagement() {
 
   const handleApprove = async (request: RegistrationRequest) => {
     setIsProcessing(request.id);
+    // Generate a secure, random temporary password
+    const tempPassword = Math.random().toString(36).slice(-8);
+
     try {
         const response = await fetch('/api/approve-user', {
             method: 'POST',
@@ -99,7 +126,7 @@ export function UserManagement() {
             body: JSON.stringify({
                 docId: request.id,
                 email: request.email,
-                password: request.password,
+                password: tempPassword, // Use the generated temporary password
                 fullName: request.fullName,
                 phone: request.phone,
                 role: request.role,
@@ -113,8 +140,8 @@ export function UserManagement() {
         }
 
         toast({
-            title: 'Success',
-            description: `${request.fullName} has been approved and their account is created.`,
+            description: <TempPasswordDisplay password={tempPassword} />,
+            duration: 30000, // Give admin time to copy the password
         });
         fetchRequests(); // Refresh the list
 

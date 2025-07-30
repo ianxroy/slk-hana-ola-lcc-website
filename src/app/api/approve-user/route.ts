@@ -6,7 +6,7 @@ import { z } from 'zod';
 const approveUserSchema = z.object({
   docId: z.string(),
   email: z.string().email(),
-  password: z.string(),
+  password: z.string().min(1, { message: "A password is required."}), // Ensure password is provided
   fullName: z.string(),
   phone: z.string(),
   role: z.enum(['admin', 'employee']),
@@ -14,13 +14,20 @@ const approveUserSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { adminAuth, adminDb } = await getFirebaseAdmin();
     // 1. Validate the incoming request body
     const body = await req.json();
-    const { docId, email, password, fullName, phone, role } = approveUserSchema.parse(body);
+    const parsed = approveUserSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json({ message: 'Invalid request data.', errors: parsed.error.errors }, { status: 400 });
+    }
+    
+    const { docId, email, password, fullName, phone, role } = parsed.data;
+
+    const { adminAuth, adminDb } = await getFirebaseAdmin();
 
     // This is a protected route, so you'd want to verify if the caller is an admin.
-    // For simplicity in this context, we'll assume the check is handled by Firebase App Check or a similar mechanism.
+    // For simplicity in this context, we'll assume the check is handled by other mechanisms like App Check or custom tokens.
 
     // 2. Create the user in Firebase Authentication
     const userRecord = await adminAuth.createUser({
@@ -49,11 +56,18 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: 'Invalid request data.', errors: error.errors }, { status: 400 });
     }
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'auth/email-already-exists') {
-        return NextResponse.json({ message: 'This email is already in use by an existing user.' }, { status: 409 });
+    // Specific check for Firebase Auth errors
+    if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string; message: string };
+        if (firebaseError.code === 'auth/email-already-exists') {
+            return NextResponse.json({ message: 'This email is already in use by an existing user.' }, { status: 409 });
+        }
+         if (firebaseError.code === 'auth/invalid-password') {
+            return NextResponse.json({ message: 'The password must be a string with at least 6 characters.' }, { status: 400 });
+        }
     }
     console.error('An unexpected error occurred in /api/approve-user:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected server error occurred.';
     return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

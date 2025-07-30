@@ -133,11 +133,12 @@ export default function LoginPage() {
         }
 
       const requestsCollectionRef = collection(db, 'registrationRequests');
+      // DO NOT store the password in the registration request for security reasons.
+      // The admin will generate a temporary password upon approval.
       await addDoc(requestsCollectionRef, {
         email: data.email,
         fullName: data.fullName,
         phone: data.phone,
-        password: data.password, 
         status: 'pending',
         createdAt: new Date(),
       });
