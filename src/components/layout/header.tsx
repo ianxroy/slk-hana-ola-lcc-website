@@ -9,12 +9,12 @@ import { Logo } from '@/components/logo';
 import { LoginDialog } from '@/components/login-dialog';
 
 const navLinks = [
-  { href: '#home', label: 'Home' },
-  { href: '#about', label: 'About Us' },
-  { href: '#services', label: 'Services' },
-  { href: '#testimonials', label: 'Testimonials' },
-  { href: '#employment', label: 'Employment' },
-  { href: '#contact', label: 'Contact Us' },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
+  { href: '/services', label: 'Services' },
+  { href: '/testimonials', label: 'Testimonials' },
+  { href: '/employment', label: 'Employment' },
+  { href: '/contact', label: 'Contact Us' },
 ];
 
 export function Header() {
@@ -23,7 +23,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
-        <Link href="#home" className="flex items-center gap-2" aria-label="SLK Hana Ola Home">
+        <Link href="/" className="flex items-center gap-2" aria-label="SLK Hana Ola Home">
           <Logo />
         </Link>
         <nav className="hidden items-center gap-6 md:flex">

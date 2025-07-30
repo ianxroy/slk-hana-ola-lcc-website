@@ -4,11 +4,11 @@ import { Facebook, Mail, Phone, MapPin, Printer } from 'lucide-react';
 import React from 'react';
 
 const navLinks = [
-  { href: '#home', label: 'Home' },
-  { href: '#about', label: 'About Us' },
-  { href: '#services', label: 'Services' },
-  { href: '#employment', label: 'Employment' },
-  { href: '#contact', label: 'Contact Us' },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
+  { href: '/services', label: 'Services' },
+  { href: '/employment', label: 'Employment' },
+  { href: '/contact', label: 'Contact Us' },
 ];
 
 export function Footer() {

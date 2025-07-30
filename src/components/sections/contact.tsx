@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import React from 'react';
+import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
+import Link from "next/link";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -29,7 +30,11 @@ const formSchema = z.object({
   message: z.string().min(1, { message: "Message is required." }),
 });
 
-export function ContactSection() {
+type ContactSectionProps = {
+    isPreview?: boolean;
+};
+
+export function ContactSection({ isPreview = false }: ContactSectionProps) {
     const [isClient, setIsClient] = React.useState(false);
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -63,7 +68,8 @@ export function ContactSection() {
       id="contact"
       className="w-full bg-background py-12 md:py-24"
     >
-      <div className="container mx-auto px-4 md:px-6 scroll-animate">
+        <GsapScrollAnimator>
+      <div className="container mx-auto px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-4">
             <div className="text-center lg:text-left">
@@ -189,12 +195,18 @@ export function ContactSection() {
                 <Button type="submit" size="lg" className="w-full hover:bg-yellow-orange">
                   Send Message
                 </Button>
+                 {isPreview && (
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-foreground/80">Or view our full <Link href="/contact" className="underline hover:text-primary">contact page</Link>.</p>
+                    </div>
+                )}
               </form>
             </Form>
             )}
           </div>
         </div>
       </div>
+      </GsapScrollAnimator>
     </section>
   );
 }
