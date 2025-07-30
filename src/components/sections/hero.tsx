@@ -1,22 +1,14 @@
+
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 
 export function HeroSection() {
   return (
     <section 
       id="home" 
-      className="relative min-h-screen w-full flex flex-col items-center justify-center text-center text-white snap-start"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center text-center text-white snap-start bg-cover bg-center"
+      style={{ backgroundImage: "url('/images/main_banner.jpg')" }}
     >
-      <Image
-        src="/images/main_banner.jpg"
-        alt="Compassionate healthcare provider with a patient"
-        layout="fill"
-        objectFit="cover"
-        className="z-[-1]"
-        unoptimized
-        priority
-      />
       <div className="absolute inset-0 bg-black/60 z-0" />
       <div className="container relative z-10 mx-auto flex flex-col items-center px-4 py-20 md:px-6 lg:py-24">
         <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl animate-fade-in-up">
