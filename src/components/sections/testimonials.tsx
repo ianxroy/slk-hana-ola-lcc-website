@@ -13,6 +13,7 @@ const testimonials = [
     avatar: "JD",
     rating: 5,
     quote: "SLK Hana Ola, LLC has been a blessing for our family. The caregivers are compassionate, professional, and have taken wonderful care of my mother.",
+    image: "/images/testimonial_john.jpg",
     imageHint: "happy senior man"
   },
   {
@@ -20,13 +21,15 @@ const testimonials = [
     avatar: "SP",
     rating: 5,
     quote: "The team at SLK Hana Ola, LLC is incredibly reliable and attentive. I can finally have peace of mind knowing my father is in good hands.",
-     imageHint: "smiling woman"
+    image: "/images/testimonial_sarah.jpg",
+    imageHint: "smiling woman"
   },
   {
     name: "Mike R.",
     avatar: "MR",
     rating: 4,
     quote: "Their personalized care plan was exactly what we needed. The staff is friendly and always goes the extra mile. Highly recommended!",
+    image: "/images/testimonial_mike.jpg",
     imageHint: "content person"
   }
 ];
@@ -39,7 +42,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
     const displayedTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
 
   return (
-    <section id="testimonials" className="w-full bg-accent/10 py-12 md:py-24">
+    <section id="testimonials" className="w-full bg-background py-12 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-3xl text-center space-y-4">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-text-reveal">What Our Clients Say</h2>
@@ -63,7 +66,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
               >
               <CardHeader className="flex-row items-center gap-4 pb-4">
                   <Avatar>
-                  <AvatarImage src={`/images/testimonial_${testimonial.name.split(' ')[0].toLowerCase()}.jpg`} />
+                  <AvatarImage src={testimonial.image} />
                   <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>
