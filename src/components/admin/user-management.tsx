@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface RegistrationRequest {
@@ -42,7 +41,6 @@ export function UserManagement() {
         .map((doc) => ({
             id: doc.id,
             ...doc.data(),
-            role: 'employee', // Default role
         })) as RegistrationRequest[];
       setRequests(requestsData);
     } catch (error) {
@@ -60,10 +58,6 @@ export function UserManagement() {
   React.useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
-
-  const handleRoleChange = (id: string, role: 'admin' | 'employee') => {
-    setRequests(prev => prev.map(req => req.id === id ? { ...req, role } : req));
-  }
 
   const handleReject = async (id: string) => {
     setIsProcessing(id);
@@ -105,7 +99,7 @@ export function UserManagement() {
           email: request.email,
           fullName: request.fullName,
           phone: request.phone,
-          role: request.role,
+          role: 'employee', // Always approve as employee
           status: 'approved',
           createdAt: new Date(),
         });
@@ -117,7 +111,7 @@ export function UserManagement() {
 
         toast({
             title: 'User Approved!',
-            description: `${request.fullName} has been successfully approved and their profile created.`,
+            description: `${request.fullName} has been successfully approved as an employee.`,
         });
         fetchRequests(); // Refresh the list
 
@@ -150,7 +144,6 @@ export function UserManagement() {
             <TableHead>Phone</TableHead>
             <TableHead>Requested</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Assign Role</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -167,21 +160,6 @@ export function UserManagement() {
                 <Badge variant={request.status === 'pending' ? 'secondary' : request.status === 'approved' ? 'default' : 'destructive'}>
                   {request.status}
                 </Badge>
-              </TableCell>
-              <TableCell>
-                 <Select
-                  value={request.role}
-                  onValueChange={(value) => handleRoleChange(request.id, value as 'admin' | 'employee')}
-                  disabled={isProcessing === request.id || request.status !== 'pending'}
-                >
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="employee">Employee</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
               </TableCell>
               <TableCell className="text-right">
                 {request.status === 'pending' && (
@@ -208,7 +186,7 @@ export function UserManagement() {
             </TableRow>
           )) : (
             <TableRow>
-                <TableCell colSpan={7} className="text-center h-24">
+                <TableCell colSpan={6} className="text-center h-24">
                     No pending registration requests.
                 </TableCell>
             </TableRow>
