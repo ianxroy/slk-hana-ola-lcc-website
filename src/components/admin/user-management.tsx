@@ -2,23 +2,23 @@
 'use client';
 
 import * as React from 'react';
-import { collection, getDocs, doc, updateDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { useAuth } from '@/context/auth-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-interface ManagedUser {
-  uid: string;
+interface RegistrationRequest {
+  id: string;
   email: string;
   fullName: string;
   phone: string;
+  password?: string;
   role: 'admin' | 'employee';
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'rejected';
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -26,29 +26,29 @@ interface ManagedUser {
 }
 
 export function UserManagement() {
-  const { user } = useAuth();
   const { toast } = useToast();
-
-  const [users, setUsers] = React.useState<ManagedUser[]>([]);
+  const [requests, setRequests] = React.useState<RegistrationRequest[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isProcessing, setIsProcessing] = React.useState<string | null>(null);
 
-  const fetchUsers = React.useCallback(async () => {
+  const fetchRequests = React.useCallback(async () => {
     setIsLoading(true);
     try {
-      const usersCollection = collection(db, 'users');
-      const q = query(usersCollection, orderBy('createdAt', 'desc'));
+      const requestsCollection = collection(db, 'registrationRequests');
+      const q = query(requestsCollection, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      const usersData = querySnapshot.docs.map((doc) => ({
-        uid: doc.id,
+      const requestsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
         ...doc.data(),
-      })) as ManagedUser[];
-      setUsers(usersData);
+        role: 'employee', // Default role
+      })) as RegistrationRequest[];
+      setRequests(requestsData);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching registration requests:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to fetch users.',
+        description: 'Failed to fetch registration requests.',
       });
     } finally {
       setIsLoading(false);
@@ -56,46 +56,79 @@ export function UserManagement() {
   }, [toast]);
 
   React.useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchRequests();
+  }, [fetchRequests]);
 
-  const handleStatusChange = async (uid: string, status: 'approved' | 'rejected') => {
+  const handleRoleChange = (id: string, role: 'admin' | 'employee') => {
+    setRequests(prev => prev.map(req => req.id === id ? { ...req, role } : req));
+  }
+
+  const handleReject = async (id: string) => {
+    setIsProcessing(id);
     try {
-      const userDocRef = doc(db, 'users', uid);
-      await updateDoc(userDocRef, { status });
+      // Option 1: Just delete the request
+      await deleteDoc(doc(db, "registrationRequests", id));
+
+      // Option 2: Mark as rejected (if you want to keep a record)
+      // const requestDocRef = doc(db, 'registrationRequests', id);
+      // await updateDoc(requestDocRef, { status: 'rejected' });
+      
       toast({
         title: 'Success',
-        description: `User status updated to ${status}.`,
+        description: 'Registration request has been rejected.',
       });
-      fetchUsers(); // Refresh users list
+      fetchRequests(); // Refresh list
     } catch (error) {
-      console.error('Error updating user status:', error);
+      console.error('Error rejecting request:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to update user status.',
+        description: 'Failed to reject the request.',
       });
+    } finally {
+        setIsProcessing(null);
     }
   };
 
-  const handleRoleChange = async (uid: string, role: 'admin' | 'employee') => {
+  const handleApprove = async (request: RegistrationRequest) => {
+    setIsProcessing(request.id);
     try {
-      const userDocRef = doc(db, 'users', uid);
-      await updateDoc(userDocRef, { role });
-      toast({
-        title: 'Success',
-        description: `User role updated to ${role}.`,
-      });
-      fetchUsers(); // Refresh users list
-    } catch (error) {
-      console.error('Error updating user role:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to update user role.',
-      });
+        const response = await fetch('/api/approve-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                docId: request.id,
+                email: request.email,
+                password: request.password,
+                fullName: request.fullName,
+                phone: request.phone,
+                role: request.role,
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to approve user.');
+        }
+
+        toast({
+            title: 'Success',
+            description: `${request.fullName} has been approved and their account is created.`,
+        });
+        fetchRequests(); // Refresh the list
+
+    } catch (error: any) {
+        console.error('Error approving request:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Approval Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
+    } finally {
+        setIsProcessing(null);
     }
-  };
+  }
   
   if (isLoading) {
     return (
@@ -112,44 +145,31 @@ export function UserManagement() {
             <TableHead>Full Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
-            <TableHead>Registered</TableHead>
+            <TableHead>Requested</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>Assign Role</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((managedUser) => (
-            <TableRow key={managedUser.uid}>
-              <TableCell>{managedUser.fullName}</TableCell>
-              <TableCell>{managedUser.email}</TableCell>
-              <TableCell>{managedUser.phone}</TableCell>
+          {requests.length > 0 ? requests.map((request) => (
+            <TableRow key={request.id}>
+              <TableCell>{request.fullName}</TableCell>
+              <TableCell>{request.email}</TableCell>
+              <TableCell>{request.phone}</TableCell>
               <TableCell>
-                {new Date(managedUser.createdAt.seconds * 1000).toLocaleDateString()}
+                {new Date(request.createdAt.seconds * 1000).toLocaleDateString()}
               </TableCell>
               <TableCell>
-                <Badge
-                  variant={
-                    managedUser.status === 'approved'
-                      ? 'default'
-                      : managedUser.status === 'pending'
-                      ? 'secondary'
-                      : 'destructive'
-                  }
-                  className={
-                    managedUser.status === 'approved' ? 'bg-green-500' : ''
-                  }
-                >
-                  {managedUser.status}
+                <Badge variant={request.status === 'pending' ? 'secondary' : 'destructive'}>
+                  {request.status}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Select
-                  value={managedUser.role}
-                  onValueChange={(value) =>
-                    handleRoleChange(managedUser.uid, value as 'admin' | 'employee')
-                  }
-                  disabled={managedUser.uid === user?.uid} // Admin can't change their own role
+                 <Select
+                  value={request.role}
+                  onValueChange={(value) => handleRoleChange(request.id, value as 'admin' | 'employee')}
+                  disabled={isProcessing === request.id}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Select role" />
@@ -160,19 +180,22 @@ export function UserManagement() {
                   </SelectContent>
                 </Select>
               </TableCell>
-              <TableCell>
-                {managedUser.status === 'pending' && (
-                  <div className="flex gap-2">
+              <TableCell className="text-right">
+                {request.status === 'pending' && (
+                  <div className="flex gap-2 justify-end">
                     <Button
                       size="sm"
-                      onClick={() => handleStatusChange(managedUser.uid, 'approved')}
+                      onClick={() => handleApprove(request)}
+                      disabled={isProcessing === request.id}
                     >
+                      {isProcessing === request.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Approve
                     </Button>
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleStatusChange(managedUser.uid, 'rejected')}
+                      onClick={() => handleReject(request.id)}
+                       disabled={isProcessing === request.id}
                     >
                       Reject
                     </Button>
@@ -180,7 +203,13 @@ export function UserManagement() {
                 )}
               </TableCell>
             </TableRow>
-          ))}
+          )) : (
+            <TableRow>
+                <TableCell colSpan={7} className="text-center h-24">
+                    No pending registration requests.
+                </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
   );

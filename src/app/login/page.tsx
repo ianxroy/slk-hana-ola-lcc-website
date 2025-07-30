@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, setDoc, getDocs, collection, limit, query } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc, setDoc, collection, addDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -73,15 +73,6 @@ export default function LoginPage() {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        if (userData.status === 'pending') {
-          await auth.signOut();
-          router.push('/registration-pending');
-          return;
-        }
-        if (userData.status === 'rejected') {
-          await auth.signOut();
-          throw new Error('Your account registration has been rejected. Please contact an administrator for assistance.');
-        }
         if (userData.status === 'approved') {
           toast({
             title: 'Login Successful',
@@ -94,13 +85,13 @@ export default function LoginPage() {
             router.push('/dashboard');
           }
         } else {
-            throw new Error('Invalid account status. Please contact support.');
+            // This case shouldn't be hit if only approved users are in the 'users' collection
+            await auth.signOut();
+            throw new Error('Your account is not approved. Please contact an administrator.');
         }
       } else {
-        // This case handles users who registered but whose document creation might have failed or is delayed.
-        // It's safer to deny login and ask them to contact support or try registering again.
         await auth.signOut();
-        throw new Error("Your user profile was not found. Please try registering again or contact support.");
+        throw new Error("Your user profile was not found. If you recently registered, please wait for admin approval.");
       }
 
     } catch (error: any) {
@@ -119,55 +110,22 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      // 1. Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
-      
-      // 2. Logic to determine role and status
-      const usersCollectionRef = collection(db, 'users');
-      const q = query(usersCollectionRef, limit(1));
-      const snapshot = await getDocs(q);
-      const isFirstUser = snapshot.empty;
-
-      const role = isFirstUser ? 'admin' : 'employee';
-      const status = isFirstUser ? 'approved' : 'pending';
-
-      // 3. Create the user document in Firestore directly from the client
-      await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: data.email,
-          fullName: data.fullName,
-          phone: data.phone,
-          role: role,
-          status: status,
-          createdAt: new Date(),
+      // 1. Add registration request to Firestore
+      const requestsCollectionRef = collection(db, 'registrationRequests');
+      await addDoc(requestsCollectionRef, {
+        email: data.email,
+        fullName: data.fullName,
+        phone: data.phone,
+        password: data.password, // Storing password temporarily. This is not ideal for production.
+        status: 'pending',
+        createdAt: new Date(),
       });
       
-      // 4. Sign the user out and redirect based on status
-      await auth.signOut();
-      
-      if (status === 'approved') {
-          toast({
-            title: 'Admin Registration Successful!',
-            description: 'You are the first user, so you have been made an admin. You can now log in.',
-          });
-          setActiveTab('login');
-          registerForm.reset();
-      } else {
-          // Redirect to the pending page for 'pending' status
-          router.push('/registration-pending');
-      }
+      // 2. Redirect to pending page
+      router.push('/registration-pending');
 
     } catch (error: any) {
-        if (error.code === 'auth/email-already-in-use') {
-            setError('This email address is already in use. Please try logging in.');
-        } else {
-            setError(error.message || "An unexpected error occurred during registration.");
-        }
+        setError(error.message || "An unexpected error occurred during registration.");
     } finally {
         setIsLoading(false);
     }
