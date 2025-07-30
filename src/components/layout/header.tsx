@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { LoginDialog } from '@/components/login-dialog';
 import { Logo } from '../logo';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/auth-context';
@@ -24,7 +23,7 @@ const navLinks = [
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { isLoggedIn } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-[#00A7A9] text-primary-foreground backdrop-blur-sm">
@@ -45,7 +44,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          {isLoggedIn && (
+          {user && (
             <Link
               href="/dashboard"
               className={cn(
@@ -56,7 +55,13 @@ export function Header() {
               Dashboard
             </Link>
           )}
-          <LoginDialog />
+           {user ? (
+              <Button onClick={logout} variant="secondary">Logout</Button>
+            ) : (
+              <Button asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
         </nav>
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -89,7 +94,7 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  {isLoggedIn && (
+                  {user && (
                      <Link
                        href="/dashboard"
                        className={cn(
@@ -102,7 +107,13 @@ export function Header() {
                      </Link>
                   )}
                   <div className="pt-4">
-                    <LoginDialog />
+                     {user ? (
+                        <Button onClick={() => { logout(); setIsOpen(false); }} variant="secondary">Logout</Button>
+                      ) : (
+                        <Button asChild onClick={() => setIsOpen(false)}>
+                          <Link href="/login">Login</Link>
+                        </Button>
+                      )}
                   </div>
                 </nav>
               </div>
