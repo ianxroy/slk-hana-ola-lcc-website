@@ -20,7 +20,7 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-black/60 z-0" />
       <div className="container relative z-10 mx-auto flex flex-col items-center px-4 py-20 md:px-6 lg:py-24">
         <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl animate-fade-in-up">
-          PROVIDING THE HIGHEHEST QUALITY HEALTHCARE AT HOME
+          PROVIDING THE HIGHEST QUALITY HEALTHCARE AT HOME
         </h1>
         <p className="mt-6 max-w-3xl text-lg text-white/90 md:text-xl animate-fade-in-up">
           SLK Hana Ola, LLC provides exceptional healthcare services with a personal touch. We are dedicated to the well-being of our community, one patient at a time.
