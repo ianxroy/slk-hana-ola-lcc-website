@@ -9,9 +9,8 @@ import { z } from 'zod';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  User,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,31 +45,6 @@ const registerSchema = z.object({
   phone: z.string().min(1, { message: 'Phone number is required.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
-
-// This function creates the user document in Firestore after successful authentication.
-const createUserDocument = async (user: User, fullName: string, phone: string) => {
-    // Check if this is the first user to register
-    const usersCollectionRef = collection(db, 'users');
-    const q = query(usersCollectionRef, limit(1));
-    const querySnapshot = await getDocs(q);
-    const isFirstUser = querySnapshot.empty;
-
-    const role = isFirstUser ? 'admin' : 'employee';
-    const status = isFirstUser ? 'approved' : 'pending';
-    
-    // Create a user document in Firestore
-    await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        fullName: fullName,
-        phone: phone,
-        role: role,
-        status: status,
-        createdAt: new Date(),
-    });
-
-    return { role, status };
-};
 
 
 export default function LoginPage() {
@@ -140,24 +114,49 @@ export default function LoginPage() {
     setError(null);
     setSuccessMessage(null);
     try {
+      // 1. Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
       const user = userCredential.user;
+      
+      // 2. Get the user's auth token
+      const token = await user.getIdToken();
 
-      // Now that the user is created and authenticated, create their Firestore document.
-      const { role, status } = await createUserDocument(user, data.fullName, data.phone);
+      // 3. Call the secure API route to create the Firestore document
+      const response = await fetch('/api/create-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: data.email,
+          fullName: data.fullName,
+          phone: data.phone,
+        }),
+      });
 
-      const message = status === 'approved'
+      const result = await response.json();
+
+      if (!response.ok) {
+        // If the API call fails, we should ideally delete the auth user to avoid orphaned accounts.
+        // This is an advanced topic, but for now, we'll just show the error.
+        await user.delete();
+        throw new Error(result.message || 'Failed to create user document.');
+      }
+
+      const message = result.status === 'approved'
         ? 'Admin registration successful! You are the first user, so you have been made an admin. You can now log in.'
         : 'Registration successful! Please wait for an administrator to approve your account.';
       
       setSuccessMessage(message);
       registerForm.reset();
 
-      // Since the user is technically logged in after creation, sign them out.
+      // Sign the user out since their account is likely pending
       await auth.signOut();
 
     } catch (error: any) {
@@ -268,8 +267,3 @@ export default function LoginPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </main>
-      <Footer />
-    </div>
-  );
-}
