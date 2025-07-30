@@ -121,18 +121,25 @@ export default function LoginPage() {
       );
       const user = userCredential.user;
 
-      // Create a user document in Firestore with 'pending' status
+      // Temporary logic for first admin registration
+      const isAdminRegistration = data.email.toLowerCase() === 'admin@slkhanaola.com';
+
+      // Create a user document in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
         fullName: data.fullName,
         phone: data.phone,
-        role: 'employee', // Default role
-        status: 'pending', // Initial status
+        role: isAdminRegistration ? 'admin' : 'employee',
+        status: isAdminRegistration ? 'approved' : 'pending',
         createdAt: new Date(),
       });
       
-      setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
+      if (isAdminRegistration) {
+        setSuccessMessage('Admin registration successful! You can now log in.');
+      } else {
+        setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
+      }
       registerForm.reset();
 
     } catch (error: any) {
@@ -248,5 +255,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
