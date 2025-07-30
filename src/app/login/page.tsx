@@ -226,7 +226,7 @@ export default function LoginPage() {
               <CardHeader>
                 <CardTitle>Register</CardTitle>
                 <CardDescription>
-                  Create a new account. Your registration will be reviewed by an administrator.
+                  Create a new account. Your request will be reviewed by an administrator.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
