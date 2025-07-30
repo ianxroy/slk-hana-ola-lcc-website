@@ -68,11 +68,6 @@ export function Footer() {
                     </React.Fragment>
                     ))}
               </nav>
-               <div className="pt-4">
-                    <a href="https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick" target="_blank" rel="noopener noreferrer">
-                        <Image src="/images/bbb-seal.png" alt="Better Business Bureau Seal" width={150} height={57} unoptimized/>
-                    </a>
-                </div>
            </div>
         </div>
 

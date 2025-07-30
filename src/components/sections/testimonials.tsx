@@ -4,20 +4,21 @@ import { Star } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const testimonials = [
   {
     name: "John D.",
     avatar: "JD",
     rating: 5,
-    quote: "SLK Hana Ola has been a blessing for our family. The caregivers are compassionate, professional, and have taken wonderful care of my mother.",
+    quote: "SLK Hana Ola, LLC has been a blessing for our family. The caregivers are compassionate, professional, and have taken wonderful care of my mother.",
     imageHint: "happy senior man"
   },
   {
     name: "Sarah P.",
     avatar: "SP",
     rating: 5,
-    quote: "The team at SLK Hana Ola is incredibly reliable and attentive. I can finally have peace of mind knowing my father is in good hands.",
+    quote: "The team at SLK Hana Ola, LLC is incredibly reliable and attentive. I can finally have peace of mind knowing my father is in good hands.",
      imageHint: "smiling woman"
   },
   {
@@ -44,6 +45,11 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
           <p className="text-lg text-foreground/80 animate-fade-in-up">
               Real stories from families we've had the privilege to serve.
           </p>
+           <div className="pt-4 inline-block animate-fade-in-up">
+              <a href="https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick" target="_blank" rel="noopener noreferrer">
+                  <Image src="/images/bbb-seal.png" alt="Better Business Bureau Seal" width={150} height={57} unoptimized/>
+              </a>
+          </div>
           </div>
           <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
           {displayedTestimonials.map((testimonial) => (
