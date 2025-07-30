@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
@@ -51,27 +52,29 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
                             SLK Hana Ola, LLC offers the following services regardless of race, age, color, creed, sex, national origin, ancestry, religion, disability, marital status or sexual orientation.
                         </p>
                     </div>
-                    <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 stagger-container">
-                        {displayedServices.map((service, index) => (
-                            <Card key={index} className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
-                                <CardHeader>
-                                     <div className="overflow-hidden rounded-t-lg">
-                                        <Image 
-                                            src={service.image}
-                                            alt={service.title}
-                                            width={600}
-                                            height={400}
-                                            className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            data-ai-hint={service.imageHint}
-                                        />
-                                    </div>
-                                    <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-text-reveal">{service.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="flex-grow">
-                                    <p className="text-base animate-fade-in-up">{service.description}</p>
-                                </CardContent>
-                            </Card>
-                        ))}
+                    <div className="mx-auto max-w-6xl">
+                        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 stagger-container">
+                            {displayedServices.map((service, index) => (
+                                <Card key={index} className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
+                                    <CardHeader>
+                                         <div className="overflow-hidden rounded-t-lg">
+                                            <Image 
+                                                src={service.image}
+                                                alt={service.title}
+                                                width={600}
+                                                height={400}
+                                                className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                data-ai-hint={service.imageHint}
+                                            />
+                                        </div>
+                                        <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4 animate-text-reveal">{service.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="flex-grow">
+                                        <p className="text-base animate-fade-in-up">{service.description}</p>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
                     </div>
                     <div className="mt-12 text-center">
                          <p className="text-xl font-bold text-primary pt-6 animate-fade-in-up">
