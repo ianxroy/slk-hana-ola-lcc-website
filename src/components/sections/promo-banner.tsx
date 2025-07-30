@@ -96,7 +96,7 @@ export function PromoBanner() {
                                 )}
                             </div>
                         )}
-                        <div className="group overflow-hidden rounded-lg shadow-lg">
+                        <div className="group overflow-hidden rounded-lg shadow-lg max-h-[400px]">
                           <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
                             <Image
                               src={banner.image}
