@@ -23,7 +23,6 @@ interface Testimonial {
   rating: number;
   image?: string; 
   createdAt: Timestamp;
-  authorUid?: string;
 }
 
 export function TestimonialManagement() {
@@ -104,7 +103,6 @@ export function TestimonialManagement() {
       } else { // Adding new
         await addDoc(collection(db, 'testimonials'), {
           ...dataToSave,
-          authorUid: user.uid, // Add author's UID
           createdAt: Timestamp.now(),
         });
         toast({ title: 'Success', description: 'Testimonial added successfully.' });
