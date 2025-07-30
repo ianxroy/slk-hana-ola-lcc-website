@@ -19,7 +19,9 @@ export default function Home() {
           <HeroSection />
           <AboutSection isPreview />
           <ServicesSection />
-          <TestimonialsSection isPreview />
+        </GsapScrollAnimator>
+        <TestimonialsSection isPreview />
+        <GsapScrollAnimator>
           <EmploymentSection isPreview />
           <ContactSection isPreview />
         </GsapScrollAnimator>
