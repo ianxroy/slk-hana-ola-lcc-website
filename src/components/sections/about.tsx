@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function AboutSection() {
     return (
-        <section id="about" className="scroll-animate min-h-screen snap-start w-full bg-background flex items-center justify-center py-12 md:py-24">
-            <div className="container mx-auto px-4 md:px-6">
+        <section id="about" className="min-h-screen snap-start w-full bg-background flex items-center justify-center py-12 md:py-24">
+            <div className="container mx-auto px-4 md:px-6 scroll-animate">
                 <div className="mx-auto max-w-3xl text-center space-y-4">
                     <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">About SLK Hana Ola</h2>
                     <p className="text-lg font-semibold text-primary">TO PROMOTE, PROTECT AND ADVANCE THE HIGHEHEST QUALITY HEALTHCARE AT HOME</p>
@@ -26,8 +26,8 @@ export function AboutSection() {
                        </p>
                    </div>
                    
-                   <div className="mt-12 grid gap-8 md:grid-cols-2">
-                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                   <div className="mt-12 grid gap-8 md:grid-cols-2 stagger-container">
+                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                             <CardHeader>
                                 <div className="overflow-hidden rounded-t-lg">
                                     <Image 
@@ -45,7 +45,7 @@ export function AboutSection() {
                                 <p className="text-left text-base">To respectfully and compassionately meet the needs of our clients and their families by listening, planning, educating and delivering the highest quality of individualized home healthcare.</p>
                             </CardContent>
                         </Card>
-                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                              <CardHeader>
                                 <div className="overflow-hidden rounded-t-lg">
                                     <Image 

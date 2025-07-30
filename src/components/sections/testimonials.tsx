@@ -29,8 +29,8 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section id="testimonials" className="scroll-animate min-h-screen snap-start w-full bg-secondary/10 flex items-center justify-center py-12 md:py-24">
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="testimonials" className="min-h-screen snap-start w-full bg-secondary/10 flex items-center justify-center py-12 md:py-24">
+      <div className="container mx-auto px-4 md:px-6 scroll-animate">
         <div className="mx-auto max-w-3xl text-center space-y-4">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">What Our Clients Say</h2>
           <p className="text-lg text-foreground/80">
