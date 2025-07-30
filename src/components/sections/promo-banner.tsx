@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "../ui/card";
+import { cn } from "@/lib/utils";
 
 // Mock Data for Promo Banners
 const mockBanners = [
@@ -23,7 +24,7 @@ const mockBanners = [
     ctaLink: "/employment",
     badge: "Careers",
     badgeVariant: "secondary",
-    image: "https://placehold.co/600x400.png",
+    image: "https://placehold.co/1200x600.png",
     imageHint: "caregiver helping elderly"
   },
   {
@@ -35,7 +36,7 @@ const mockBanners = [
     ctaLink: "/contact",
     badge: "Limited Time Offer",
     badgeVariant: "default",
-    image: "https://placehold.co/600x400.png",
+    image: "https://placehold.co/1200x600.png",
     imageHint: "friendly consultation"
   },
   {
@@ -46,8 +47,14 @@ const mockBanners = [
     ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick",
     badge: "Trusted",
     badgeVariant: "destructive",
-    image: "https://placehold.co/600x400.png",
+    image: "https://placehold.co/1200x600.png",
     imageHint: "quality seal"
+  },
+  {
+    id: "4",
+    image: "https://placehold.co/1200x600.png",
+    imageHint: "happy family",
+    ctaLink: "/about",
   }
 ];
 
@@ -55,7 +62,7 @@ export function PromoBanner() {
   return (
     <section
       id="promo-banner"
-      className="w-full bg-primary/10 py-8 md:py-12"
+      className="w-full bg-primary/10 py-12 md:py-16"
       aria-labelledby="promo-banner-heading"
     >
         <div className="container mx-auto px-4 md:px-6">
@@ -69,36 +76,42 @@ export function PromoBanner() {
             ]}
           >
             <CarouselContent>
-              {mockBanners.map((banner) => (
-                <CarouselItem key={banner.id}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
-                    <div className="space-y-4 text-center md:text-left">
-                        <Badge variant={banner.badgeVariant as any}>
-                          {banner.badge}
-                        </Badge>
-                        <h3 className="font-headline text-2xl md:text-3xl font-bold">
-                            {banner.title}
-                        </h3>
-                        <p className="text-base md:text-lg text-foreground/80">
-                            {banner.description}
-                        </p>
-                        <Button asChild size="lg" className="mt-4">
-                            <Link href={banner.ctaLink} target={banner.ctaLink.startsWith('http') ? '_blank' : '_self'}>{banner.cta}</Link>
-                        </Button>
-                    </div>
-                    <div className="group overflow-hidden rounded-lg shadow-lg">
-                       <Image
-                        src={banner.image}
-                        alt={banner.title}
-                        width={600}
-                        height={400}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={banner.imageHint}
-                       />
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
+              {mockBanners.map((banner) => {
+                const hasTextContent = banner.title || banner.description || banner.badge;
+                return (
+                    <CarouselItem key={banner.id}>
+                      <div className={cn(
+                        "grid grid-cols-1 items-center gap-8 md:gap-12",
+                        hasTextContent && "md:grid-cols-2"
+                      )}>
+                        {hasTextContent && (
+                            <div className="space-y-4 text-center md:text-left">
+                                {banner.badge && <Badge variant={banner.badgeVariant as any}>{banner.badge}</Badge>}
+                                {banner.title && <h3 className="font-headline text-3xl md:text-4xl font-bold">{banner.title}</h3>}
+                                {banner.description && <p className="text-lg md:text-xl text-foreground/80">{banner.description}</p>}
+                                {banner.cta && banner.ctaLink && (
+                                    <Button asChild size="lg" className="mt-4">
+                                        <Link href={banner.ctaLink} target={banner.ctaLink.startsWith('http') ? '_blank' : '_self'}>{banner.cta}</Link>
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                        <div className="group overflow-hidden rounded-lg shadow-lg">
+                          <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
+                            <Image
+                              src={banner.image}
+                              alt={banner.title || 'Promotional Banner'}
+                              width={1200}
+                              height={600}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              data-ai-hint={banner.imageHint}
+                            />
+                           </Link>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                )
+              })}
             </CarouselContent>
           </Carousel>
         </div>
