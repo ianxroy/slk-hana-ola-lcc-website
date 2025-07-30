@@ -31,7 +31,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
             scrollTrigger: {
               trigger: el,
               start: 'top 85%',
-              end: 'bottom 15%',
+              end: 'top 15%',
               toggleActions: 'play reverse play reverse',
             },
           }
@@ -54,7 +54,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
                scrollTrigger: {
                  trigger: container,
                  start: 'top 85%',
-                 end: 'bottom 15%',
+                 end: 'top 15%',
                  toggleActions: 'play reverse play reverse',
                },
              }
@@ -74,7 +74,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
                 scrollTrigger: {
                     trigger: el,
                     start: 'top 90%',
-                    end: 'bottom 10%',
+                    end: 'top 10%',
                     toggleActions: 'play reverse play reverse',
                 },
             });
