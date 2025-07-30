@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, addDoc, query, where, getDocs, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -110,7 +110,25 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      // 1. Add registration request to Firestore
+        // 1. Check if email already exists in 'users' or 'registrationRequests'
+        const usersQuery = query(collection(db, "users"), where("email", "==", data.email), limit(1));
+        const registrationRequestsQuery = query(collection(db, "registrationRequests"), where("email", "==", data.email), limit(1));
+
+        const [userSnapshot, registrationRequestSnapshot] = await Promise.all([
+            getDocs(usersQuery),
+            getDocs(registrationRequestsQuery)
+        ]);
+
+        if (!userSnapshot.empty) {
+            throw new Error("This email address is already associated with an approved account.");
+        }
+
+        if (!registrationRequestSnapshot.empty) {
+            throw new Error("A registration request for this email address is already pending approval.");
+        }
+
+
+      // 2. Add registration request to Firestore
       const requestsCollectionRef = collection(db, 'registrationRequests');
       await addDoc(requestsCollectionRef, {
         email: data.email,
@@ -121,7 +139,7 @@ export default function LoginPage() {
         createdAt: new Date(),
       });
       
-      // 2. Redirect to pending page
+      // 3. Redirect to pending page
       router.push('/registration-pending');
 
     } catch (error: any) {
