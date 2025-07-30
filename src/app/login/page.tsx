@@ -74,35 +74,65 @@ export default function LoginPage() {
       const user = userCredential.user;
 
       const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
+      let userDoc = await getDoc(userDocRef);
 
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (userData.status === 'pending') {
-          throw new Error('Your account is pending approval. Please contact an administrator.');
+      // If user document doesn't exist, create it. This is the first login.
+      if (!userDoc.exists()) {
+        const usersCollectionRef = collection(db, 'users');
+        const q = query(usersCollectionRef, limit(1));
+        const querySnapshot = await getDocs(q);
+        const isFirstUser = querySnapshot.empty;
+
+        const role = isFirstUser ? 'admin' : 'employee';
+        const status = isFirstUser ? 'approved' : 'pending';
+
+        // We can't get full name or phone here, so we'll have to add it later
+        // or ask the user to complete their profile. For now, we'll use email.
+        await setDoc(doc(db, 'users', user.uid), {
+            uid: user.uid,
+            email: user.email,
+            fullName: "New User", // Placeholder
+            phone: "N/A", // Placeholder
+            role: role,
+            status: status,
+            createdAt: new Date(),
+        });
+        
+        // Re-fetch the document after creating it
+        userDoc = await getDoc(userDocRef);
+
+        if (status === 'pending') {
+             await auth.signOut();
+             throw new Error('Your account has been created and is pending approval. Please contact an administrator.');
         }
-        if (userData.status === 'rejected') {
-          throw new Error('Your account registration has been rejected. Please contact an administrator.');
-        }
-        if (userData.status === 'approved') {
-          toast({
-            title: 'Login Successful',
-            description: "Welcome back!",
-          });
-          
-          if (userData.role === 'admin') {
-            router.push('/admin');
-          } else {
-            router.push('/dashboard');
-          }
+      }
+
+      const userData = userDoc.data();
+      if (!userData) {
+          throw new Error("User data not found after check.");
+      }
+
+      if (userData.status === 'pending') {
+        await auth.signOut();
+        throw new Error('Your account is pending approval. Please contact an administrator.');
+      }
+      if (userData.status === 'rejected') {
+        await auth.signOut();
+        throw new Error('Your account registration has been rejected. Please contact an administrator.');
+      }
+      if (userData.status === 'approved') {
+        toast({
+          title: 'Login Successful',
+          description: "Welcome back!",
+        });
+        
+        if (userData.role === 'admin') {
+          router.push('/admin');
         } else {
-            throw new Error('Invalid account status.');
+          router.push('/dashboard');
         }
       } else {
-        // This can happen if the user was created in Auth but the Firestore doc creation failed.
-        // We can try to create it now.
-         await auth.signOut();
-         throw new Error("Your user profile is incomplete. Please try registering again. If the problem persists, contact support.");
+          throw new Error('Invalid account status.');
       }
 
     } catch (error: any) {
@@ -116,55 +146,43 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
-    let userCredential;
 
     try {
-      // 1. Create user in Firebase Auth
-      userCredential = await createUserWithEmailAndPassword(
+      // 1. Create user in Firebase Auth. We no longer create the Firestore doc here.
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
-      const user = userCredential.user;
-
-      // This is the temporary logic for the first admin user
-      const isAdminRegistration = data.email.toLowerCase() === 'admin@slkhanaola.com';
-      const role = isAdminRegistration ? 'admin' : 'employee';
-      const status = isAdminRegistration ? 'approved' : 'pending';
-      const message = isAdminRegistration
-        ? 'Admin registration successful! You can now log in with full administrative privileges.'
-        : 'Registration successful! Please wait for an administrator to approve your account.';
-
-      // 2. Create the user document in Firestore.
-      // This call is now made by an authenticated user, so it will pass security rules.
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: data.email,
-        fullName: data.fullName,
-        phone: data.phone,
-        role: role,
-        status: status,
-        createdAt: new Date(),
-      });
       
-      setSuccessMessage(message);
-      registerForm.reset();
+      // Store user details temporarily to be picked up on first login
+      // NOTE: For a real app, this is not robust. A server-side process is better.
+      // But for this project, we'll store it in a way the login can create the user doc.
+      // A simple way is to create a temporary doc that the user can read and then delete.
+      // For this implementation, we will rely on the login to create a basic profile.
+      // We will also store the full details in a separate 'registrations' collection
+      // that an admin can reference. This is more secure.
 
-      // 3. Sign the user out. If they are not an admin, their account is pending.
-      // If they are an admin, they can now log in normally.
+      await setDoc(doc(db, "registrations", userCredential.user.uid), {
+          email: data.email,
+          fullName: data.fullName,
+          phone: data.phone,
+          registeredAt: new Date(),
+      });
+
+      // 2. Sign the user out immediately.
       await auth.signOut();
+
+      // 3. Show success message and prompt user to login.
+      setSuccessMessage("Registration successful! Please log in to continue.");
+      registerForm.reset();
+      setActiveTab('login'); // Switch to the login tab
 
     } catch (error: any) {
         if (error.code === 'auth/email-already-in-use') {
             setError('This email address is already in use.');
         } else {
             setError(error.message);
-        }
-        // If user was created in Auth but Firestore write failed, clean up the auth user.
-        if (userCredential) {
-            await userCredential.user.delete().catch(() => {
-                console.warn("Failed to clean up orphaned auth user. Please do this manually in the Firebase console.")
-            });
         }
     } finally {
         setIsLoading(false);
@@ -195,6 +213,13 @@ export default function LoginPage() {
                        <AlertCircle className="h-4 w-4" />
                        <AlertTitle>Error</AlertTitle>
                        <AlertDescription>{error}</AlertDescription>
+                     </Alert>
+                   )}
+                    {successMessage && activeTab === 'login' && (
+                     <Alert variant="default" className="bg-green-100 border-green-400 text-green-700">
+                       <AlertCircle className="h-4 w-4" />
+                       <AlertTitle>Success</AlertTitle>
+                       <AlertDescription>{successMessage}</AlertDescription>
                      </Alert>
                    )}
                   <div className="space-y-2">
@@ -232,13 +257,6 @@ export default function LoginPage() {
                        <AlertDescription>{error}</AlertDescription>
                      </Alert>
                    )}
-                    {successMessage && activeTab === 'register' && (
-                     <Alert variant="default" className="bg-green-100 border-green-400 text-green-700">
-                       <AlertCircle className="h-4 w-4" />
-                       <AlertTitle>Success</AlertTitle>
-                       <AlertDescription>{successMessage}</AlertDescription>
-                     </Alert>
-                   )}
                    <div className="space-y-2">
                     <Label htmlFor="register-fullName">Full Name</Label>
                     <Input id="register-fullName" type="text" placeholder="John Doe" {...registerForm.register('fullName')} />
@@ -272,6 +290,5 @@ export default function LoginPage() {
       <Footer />
     </div>
   );
-}
 
     
