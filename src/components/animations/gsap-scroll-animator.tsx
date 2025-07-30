@@ -19,7 +19,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
     const ctx = gsap.context(() => {
       const commonScrollTrigger = {
         start: 'top 90%', // Start animation when element top hits 90% from viewport top
-        end: 'bottom 80%', // End animation when element bottom hits 80% from viewport top
+        end: 'bottom 20%', // End animation when element bottom hits 20% from viewport top
         toggleActions: 'play reverse play reverse',
       };
       
@@ -81,32 +81,51 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
         });
 
       // Star animation
-      const testimonialCards = gsap.utils.toArray<HTMLElement>('#testimonials .testimonial-card');
+      const testimonialCards = gsap.utils.toArray<HTMLElement>('.testimonial-card');
       testimonialCards.forEach((card) => {
         const stars = gsap.utils.toArray<HTMLElement>('.star', card);
         
-        gsap.from(stars, {
-          scale: 0,
-          stagger: 0.1,
-          ease: 'back.out(1.7)',
-          duration: 1,
+        gsap.fromTo(card, { autoAlpha: 0, y: 50 }, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: card,
+                ...commonScrollTrigger
+            }
+        });
+        
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: card,
-            start: 'top 75%',
+            start: 'top 50%',
             toggleActions: 'play reverse play reverse',
           }
         });
 
+        // In-animation for stars
+        tl.from(stars, {
+          scale: 0,
+          stagger: 0.1,
+          ease: 'back.out(1.7)',
+          duration: 1,
+        });
+
+        // Twinkle animation for each star, starts after the 'in' animation
         stars.forEach(star => {
-          gsap.to(star, {
+          tl.fromTo(star, 
+            { scale: 1, opacity: 1 },
+            {
               scale: 1.1,
               opacity: 0.7,
               repeat: -1,
               yoyo: true,
               duration: Math.random() * 1.5 + 0.5,
               ease: "power1.inOut",
-              delay: Math.random()
-          });
+            },
+            ">-0.5" // Overlap with the previous animation slightly for a more natural feel
+          );
         });
       });
 

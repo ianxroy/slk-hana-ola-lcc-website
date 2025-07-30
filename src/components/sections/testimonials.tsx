@@ -77,12 +77,12 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                 ))}
             </div>
           ) : (
-            <div className="mt-12 flex flex-wrap justify-center gap-8 stagger-container">
+            <div className="mt-12 flex flex-wrap justify-center gap-8">
                 {displayedTestimonials.map((testimonial) => (
                     <Card 
                         key={testimonial.id} 
                         className={cn(
-                            "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up w-full md:w-96",
+                            "testimonial-card flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl w-full md:w-96",
                             testimonial.rating === 5 && "five-star-glow"
                         )}
                     >
@@ -107,7 +107,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-base italic animate-fade-in-up">"{testimonial.quote}"</p>
+                        <p className="text-base italic">"{testimonial.quote}"</p>
                     </CardContent>
                     </Card>
                 ))}
