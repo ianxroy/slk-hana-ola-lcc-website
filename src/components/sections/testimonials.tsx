@@ -31,6 +31,14 @@ const testimonials = [
     quote: "Their personalized care plan was exactly what we needed. The staff is friendly and always goes the extra mile. Highly recommended!",
     image: "/images/testimonial_mike.jpg",
     imageHint: "content person"
+  },
+  {
+    name: "Dan and June",
+    avatar: "DJ",
+    rating: 5,
+    quote: "Home health aide staff were skillful, both professionally and personally. Company management was very prompt in response to scheduling requests and in providing documents for insurance claims. I would retain the company again.",
+    image: "https://placehold.co/100x100.png",
+    imageHint: "happy couple"
   }
 ];
 
@@ -55,7 +63,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
               </a>
           </div>
           </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
+          <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 stagger-container">
           {displayedTestimonials.map((testimonial) => (
               <Card 
                 key={testimonial.name} 
@@ -66,7 +74,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
               >
               <CardHeader className="flex-row items-center gap-4 pb-4">
                   <Avatar>
-                  <AvatarImage src={testimonial.image} />
+                  <AvatarImage src={testimonial.image} alt={testimonial.name} data-ai-hint={testimonial.imageHint} />
                   <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>

@@ -21,6 +21,7 @@ import React from 'react';
 import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import emailjs from '@emailjs/browser';
 
 const ContactFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -59,17 +60,46 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
 
   async function onSubmit(data: z.infer<typeof ContactFormSchema>) {
     setIsSubmitting(true);
-    console.log("Form data submitted:", data);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-        title: "Form Submitted!",
-        description: "Thank you for your message. We will get back to you shortly.",
-    });
-    
-    form.reset();
-    setIsSubmitting(false);
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "EmailJS credentials are not configured. Please contact support.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const templateParams = {
+        from_name: data.name,
+        from_email: data.email,
+        from_phone: data.phone,
+        interest: data.interest,
+        message: data.message,
+    };
+
+    try {
+        await emailjs.send(serviceId, templateId, templateParams, publicKey);
+        toast({
+            title: "Form Submitted!",
+            description: "Thank you for your message. We will get back to you shortly.",
+        });
+        form.reset();
+    } catch (error) {
+        console.error('EmailJS error:', error);
+        toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "There was a problem sending your message. Please try again.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   return (
