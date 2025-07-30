@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
@@ -34,7 +35,7 @@ type TestimonialsSectionProps = {
 };
 
 export function TestimonialsSection({ isPreview = false }: TestimonialsSectionProps) {
-    const displayedTestimonials = isPreview ? testimonials.slice(0, 2) : testimonials;
+    const displayedTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
 
   return (
     <section id="testimonials" className="w-full bg-secondary/10 py-12 md:py-24">
