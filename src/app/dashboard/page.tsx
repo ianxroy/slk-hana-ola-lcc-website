@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TimeClock } from "@/components/employee/time-clock";
+import { ProfileManagement } from "@/components/admin/profile-management";
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -36,15 +37,16 @@ export default function DashboardPage() {
             <div className="grid gap-8 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Welcome, {user.email}</CardTitle>
+                        <CardTitle>Welcome, {user.fullName || user.email}</CardTitle>
                         <CardDescription>
                             Your role is: <span className="font-bold text-primary">{user.role}</span>
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p>This is your personal dashboard. Use the time clock to log your hours.</p>
+                        <p>This is your personal dashboard. Use the time clock to log your hours or update your profile.</p>
                     </CardContent>
                 </Card>
+                 <ProfileManagement />
                 <TimeClock userId={user.uid} />
             </div>
          </div>

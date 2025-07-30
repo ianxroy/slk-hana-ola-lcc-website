@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserManagement } from '@/components/admin/user-management';
 import { PromoManagement } from '@/components/admin/promo-management';
 import { TestimonialManagement } from '@/components/admin/testimonial-management';
+import { ProfileManagement } from '@/components/admin/profile-management';
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth();
@@ -39,7 +40,22 @@ export default function AdminPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1 py-12 md:py-16">
-        <div className="container mx-auto px-4 md:px-6">
+        <div className="container mx-auto grid gap-8 px-4 md:px-6">
+           <div className="grid gap-8 md:grid-cols-2">
+             <Card>
+                <CardHeader>
+                    <CardTitle>Welcome, {user.fullName || user.email}</CardTitle>
+                    <CardDescription>
+                        Your role is: <span className="font-bold text-primary">{user.role}</span>
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p>Manage your site settings below or update your profile.</p>
+                </CardContent>
+             </Card>
+             <ProfileManagement />
+           </div>
+
           <Card>
             <CardHeader>
               <CardTitle>Admin Dashboard</CardTitle>

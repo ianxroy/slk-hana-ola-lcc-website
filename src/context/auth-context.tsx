@@ -1,15 +1,17 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
+import { User } from 'firebase/auth';
 
 interface UserProfile {
   uid: string;
   email: string | null;
+  fullName: string;
   role: 'admin' | 'employee';
   status: 'pending' | 'approved' | 'rejected';
   photoURL?: string | null;
@@ -24,55 +26,62 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [firebaseUser, authLoading, authError] = useAuthState(auth);
+  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = React.useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      if (firebaseUser) {
-        try {
-            const userDocRef = doc(db, 'users', firebaseUser.uid);
-            const userDoc = await getDoc(userDocRef);
-            if (userDoc.exists()) {
-            const userData = userDoc.data();
-            // Only set user if they are approved
-            if (userData.status === 'approved') {
-                setUser({
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    role: userData.role || 'employee',
-                    status: userData.status,
-                    photoURL: firebaseUser.photoURL
-                });
-            } else {
-                // User is pending or rejected, sign them out client-side
-                await auth.signOut();
-                setUser(null);
-            }
-            } else {
-            // Handle case where user exists in Auth but not in Firestore
+    if (authError) {
+      console.error("Firebase Auth Error:", authError);
+    }
+  }, [authError]);
+  
+  useEffect(() => {
+    if (firebaseUser) {
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const unsubscribe = onSnapshot(userDocRef, async (userDoc) => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.status === 'approved') {
+            setUserProfile({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                role: userData.role || 'employee',
+                status: userData.status,
+                fullName: userData.fullName || 'User',
+                photoURL: firebaseUser.photoURL
+            });
+          } else {
+            // User is pending or rejected, sign them out client-side
             await auth.signOut();
-            setUser(null);
-            }
-        } catch (error) {
-            console.error("Failed to fetch user document, possibly due to network issues:", error);
-            // If we can't fetch the doc (e.g., offline), sign out to prevent inconsistent state
-            await auth.signOut();
-            setUser(null);
+            setUserProfile(null);
+          }
+        } else {
+            // This case might happen during registration race condition
+            // Login logic now handles creating the doc if it doesn't exist
+            setUserProfile(null);
         }
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+        setProfileLoading(false);
+      }, (error) => {
+          console.error("Firestore snapshot error:", error);
+          auth.signOut();
+          setUserProfile(null);
+          setProfileLoading(false);
+      });
 
-    return () => unsubscribe();
-  }, []);
+      return () => unsubscribe();
+    } else {
+      setUserProfile(null);
+      setProfileLoading(false);
+    }
+  }, [firebaseUser]);
 
   const logout = async () => {
     await auth.signOut();
-    setUser(null);
+    setUserProfile(null);
   };
+  
+  const loading = authLoading || profileLoading;
 
   if (loading) {
     return (
@@ -83,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user: userProfile, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
