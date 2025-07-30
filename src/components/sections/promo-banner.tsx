@@ -5,14 +5,17 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 // Mock Data for Promo Banners
 const mockBanners = [
@@ -59,6 +62,24 @@ const mockBanners = [
 ];
 
 export function PromoBanner() {
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
+
   return (
     <section
       id="promo-banner"
@@ -67,6 +88,7 @@ export function PromoBanner() {
     >
         <div className="container mx-auto px-4 md:px-6">
           <Carousel
+            setApi={setApi}
             opts={{ loop: true }}
             plugins={[
               Autoplay({
@@ -74,6 +96,7 @@ export function PromoBanner() {
                 stopOnInteraction: true,
               }),
             ]}
+            className="group"
           >
             <CarouselContent>
               {mockBanners.map((banner) => {
@@ -81,7 +104,7 @@ export function PromoBanner() {
                 return (
                     <CarouselItem key={banner.id}>
                       <div className={cn(
-                        "grid grid-cols-1 items-center gap-8 md:gap-12",
+                        "grid grid-cols-1 items-center gap-8 md:gap-12 h-full",
                         hasTextContent && "md:grid-cols-2"
                       )}>
                         {hasTextContent && (
@@ -97,7 +120,7 @@ export function PromoBanner() {
                             </div>
                         )}
                         <div className={cn(
-                          "group overflow-hidden rounded-lg shadow-lg",
+                          "relative overflow-hidden rounded-lg shadow-lg h-[300px]",
                           !hasTextContent && "col-span-full"
                         )}>
                           <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
@@ -116,7 +139,22 @@ export function PromoBanner() {
                 )
               })}
             </CarouselContent>
+            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" />
+            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" />
           </Carousel>
+           <div className="mt-4 flex justify-center gap-2">
+            {Array.from({ length: count }).map((_, index) => (
+                <button
+                    key={index}
+                    onClick={() => api?.scrollTo(index)}
+                    className={cn(
+                        "h-2 w-2 rounded-full transition-colors",
+                        current === index + 1 ? "bg-primary" : "bg-primary/30"
+                    )}
+                    aria-label={`Go to slide ${index + 1}`}
+                />
+            ))}
+        </div>
         </div>
     </section>
   );
