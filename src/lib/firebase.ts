@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  projectId: "slk-hana-ola-llc",
-  appId: "1:118261124609:web:c34d6781c4b90922c3fa00",
-  storageBucket: "slk-hana-ola-llc.firebasestorage.app",
-  apiKey: "AIzaSyC1-vLUvpU-dEa6H6jQZY7j1IbuupNJwx4",
-  authDomain: "slk-hana-ola-llc.firebaseapp.com",
-  messagingSenderId: "118261124609",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 let app: FirebaseApp;
