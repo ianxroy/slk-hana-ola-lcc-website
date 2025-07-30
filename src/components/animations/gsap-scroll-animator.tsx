@@ -18,8 +18,8 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const commonScrollTrigger = {
-        start: 'top 80%', // Start animation when element top hits 80% from viewport top
-        end: 'bottom 20%', // End animation when element bottom hits 30% from viewport top
+        start: 'top 90%', // Start animation when element top hits 90% from viewport top
+        end: 'bottom 20%', // End animation when element bottom hits 20% from viewport top
         toggleActions: 'play reverse play reverse',
       };
       
