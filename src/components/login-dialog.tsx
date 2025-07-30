@@ -20,7 +20,7 @@ export function LoginDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="bg-primary hover:bg-yellow-orange text-primary-foreground">Login</Button>
+        <Button variant="secondary" className="bg-yellow-orange hover:bg-yellow-orange/90 text-black">Login</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
