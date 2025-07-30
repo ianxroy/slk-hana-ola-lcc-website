@@ -1,6 +1,6 @@
 import { Logo } from '@/components/logo';
 import Link from 'next/link';
-import { Facebook, Mail, Phone, MapPin, Printer } from 'lucide-react';
+import { Facebook, Mail, Phone, MapPin } from 'lucide-react';
 import React from 'react';
 import Image from 'next/image';
 
@@ -39,10 +39,6 @@ export function Footer() {
               <p className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
                 <a href="tel:808-772-4756" className="hover:underline">808-772-4756</a>
-              </p>
-               <p className="flex items-center gap-2">
-                <Printer className="h-5 w-5" />
-                <span>808-772-4757</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="h-5 w-5" />
