@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 154 30% 60%; /* Teal-Green from logo */
+    --primary: 165 42% 61%; /* #78C8B4 */
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 274 50% 64%; /* Purple from logo */
+    --secondary: 275 48% 63%; /* #B48CDC */
     --secondary-foreground: 0 0% 98%;
 
     --muted: 220 13% 91%;
     --muted-foreground: 220 9% 46%;
 
-    --accent: 80 70% 70%; /* Light Green from logo */
+    --accent: 71 82% 67%; /* #DCF078 */
     --accent-foreground: 240 10% 3.9%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,7 +31,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 154 30% 60%;
+    --ring: 165 42% 61%;
 
     --radius: 0.5rem;
   }
@@ -42,19 +43,19 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 154 30% 60%;
+    --primary: 165 42% 61%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 274 50% 64%;
+    --secondary: 275 48% 63%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 80 70% 50%;
+    --accent: 71 82% 67%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 154 30% 60%;
+    --ring: 165 42% 61%;
   }
 }
 
