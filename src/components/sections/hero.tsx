@@ -9,12 +9,12 @@ export function HeroSection() {
         <div className="relative w-full max-w-4xl">
           <div className="overflow-hidden rounded-xl shadow-2xl">
             <Image
-              src="https://placehold.co/1200x600.png"
+              src="/images/main_banner.jpg"
               alt="Compassionate healthcare provider with a patient"
               width={1200}
               height={600}
               className="h-full w-full object-cover"
-              data-ai-hint="healthcare worker patient"
+              unoptimized
               priority
             />
           </div>
@@ -23,7 +23,7 @@ export function HeroSection() {
               PROVIDING THE HIGHEST QUALITY HEALTHCARE AT HOME
             </h1>
             <p className="mt-6 max-w-3xl text-lg text-white/90 md:text-xl animate-fade-in-up">
-              SLK Hana Ola provides exceptional healthcare services with a personal touch. We are dedicated to the well-being of our community, one patient at a time.
+              SLK Hana Ola, LLC provides exceptional healthcare services with a personal touch. We are dedicated to the well-being of our community, one patient at a time.
             </p>
           </div>
         </div>

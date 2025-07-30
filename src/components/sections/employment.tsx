@@ -26,12 +26,12 @@ export function EmploymentSection({ isPreview = false }: EmploymentSectionProps)
                     </div>
                     <div className="order-1 lg:order-2 overflow-hidden rounded-xl shadow-2xl">
                         <Image
-                            src="https://placehold.co/600x400.png"
+                            src="/images/be_a_caregiver.jpg"
                             alt="Diverse team of healthcare professionals"
                             width={600}
                             height={400}
                             className="h-full w-full object-cover"
-                            data-ai-hint="medical team"
+                            unoptimized
                         />
                     </div>
                 </div>
