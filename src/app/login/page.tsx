@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, collection, limit, query } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -126,33 +126,28 @@ export default function LoginPage() {
         data.password
       );
       const user = userCredential.user;
-      const token = await user.getIdToken();
+      
+      // 2. Logic to determine role and status
+      const usersCollectionRef = collection(db, 'users');
+      const q = query(usersCollectionRef, limit(1));
+      const snapshot = await getDocs(q);
+      const isFirstUser = snapshot.empty;
 
-      // 2. Call the secure API route to create the user document in Firestore
-      const response = await fetch('/api/create-user', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            uid: user.uid,
-            email: data.email,
-            fullName: data.fullName,
-            phone: data.phone,
-        })
+      const role = isFirstUser ? 'admin' : 'employee';
+      const status = isFirstUser ? 'approved' : 'pending';
+
+      // 3. Create the user document in Firestore directly from the client
+      await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
+          email: data.email,
+          fullName: data.fullName,
+          phone: data.phone,
+          role: role,
+          status: status,
+          createdAt: new Date(),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        // If API call fails, delete the just-created auth user to allow retry
-        await user.delete();
-        throw new Error(errorData.message || 'Failed to create user document.');
-      }
       
-      const { status } = await response.json();
-      
-      // 3. Sign the user out and redirect based on status
+      // 4. Sign the user out and redirect based on status
       await auth.signOut();
       
       if (status === 'approved') {
@@ -161,6 +156,7 @@ export default function LoginPage() {
             description: 'You are the first user, so you have been made an admin. You can now log in.',
           });
           setActiveTab('login');
+          registerForm.reset();
       } else {
           // Redirect to the pending page for 'pending' status
           router.push('/registration-pending');
@@ -170,7 +166,7 @@ export default function LoginPage() {
         if (error.code === 'auth/email-already-in-use') {
             setError('This email address is already in use. Please try logging in.');
         } else {
-            setError(error.message);
+            setError(error.message || "An unexpected error occurred during registration.");
         }
     } finally {
         setIsLoading(false);
