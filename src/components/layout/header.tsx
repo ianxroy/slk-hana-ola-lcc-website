@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, React } from 'react';
@@ -21,7 +22,7 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-foreground text-background backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-secondary text-secondary-foreground backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2" aria-label="SLK Hana Ola Home">
           <Logo />
@@ -31,7 +32,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="font-headline text-lg font-medium text-background/80 transition-colors hover:text-background"
+              className="font-headline text-lg font-medium text-secondary-foreground/80 transition-colors hover:text-secondary-foreground"
             >
               {link.label}
             </Link>
@@ -41,7 +42,7 @@ export function Header() {
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-background hover:bg-background/10 hover:text-background">
+              <Button variant="ghost" size="icon" className="text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open navigation menu</span>
               </Button>
