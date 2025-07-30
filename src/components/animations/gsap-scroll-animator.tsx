@@ -93,15 +93,16 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
           }
         });
 
+        // In-animation for stars
         tl.from(stars, {
           scale: 0,
           stagger: 0.1,
           ease: 'back.out(1.7)',
         });
 
-        // Twinkle animation
+        // Twinkle animation for each star, starts after the 'in' animation
         stars.forEach(star => {
-          gsap.fromTo(star, 
+          tl.fromTo(star, 
             { scale: 1, opacity: 1 },
             {
               scale: 1.1,
@@ -110,8 +111,8 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
               yoyo: true,
               duration: Math.random() * 1.5 + 0.5,
               ease: "power1.inOut",
-              delay: Math.random() * 2
-            }
+            },
+            ">-0.5" // Overlap with the previous animation slightly for a more natural feel
           );
         });
       });
