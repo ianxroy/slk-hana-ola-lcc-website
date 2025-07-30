@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
@@ -47,7 +48,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
           </p>
            <div className="pt-4 inline-block animate-fade-in-up">
               <a href="https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick" target="_blank" rel="noopener noreferrer">
-                  <Image src="/images/bbb_rataing.png" alt="Better Business Bureau Seal" width={150} height={57} unoptimized/>
+                  <Image src="/images/bbb_rataing.png" alt="Better Business Bureau Seal" width={200} height={76} unoptimized/>
               </a>
           </div>
           </div>
@@ -62,7 +63,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
               >
               <CardHeader className="flex-row items-center gap-4 pb-4">
                   <Avatar>
-                  <AvatarImage src={`https://placehold.co/40x40.png?text=${testimonial.avatar}`} data-ai-hint={testimonial.imageHint} />
+                  <AvatarImage src={`/images/testimonial_${testimonial.name.split(' ')[0].toLowerCase()}.jpg`} />
                   <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>
