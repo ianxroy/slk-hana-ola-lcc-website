@@ -1,11 +1,4 @@
-import Image from "next/image";
-
-const services = [
-    { name: "Primary Care", description: "Comprehensive health services for all ages, from routine check-ups to chronic disease management.", imageUrl: "https://placehold.co/400x300.png", hint: "doctor patient" },
-    { name: "Specialty Referrals", description: "Coordinated access to a network of trusted specialists to ensure you get the expert care you need.", imageUrl: "https://placehold.co/400x300.png", hint: "medical chart" },
-    { name: "Wellness Programs", description: "Proactive health and wellness programs designed to keep you and your family healthy and active.", imageUrl: "https://placehold.co/400x300.png", hint: "yoga stretching" },
-    { name: "Telehealth Services", description: "Convenient and secure virtual consultations with our healthcare providers from the comfort of your home.", imageUrl: "https://placehold.co/400x300.png", hint: "video call" },
-]
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ServicesSection() {
     return (
@@ -14,28 +7,50 @@ export function ServicesSection() {
                 <div className="mx-auto max-w-3xl text-center space-y-4 mb-12">
                     <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Services</h2>
                     <p className="text-lg text-foreground/70">
-                        We offer a wide range of services to meet your healthcare needs.
+                        Because we are committed to your good health...
+                    </p>
+                    <p className="text-md text-foreground/80">
+                        SLK Hana Ola, LLC offers the following services regardless of race, age, color, creed, sex, national origin, ancestry, religion, disability, marital status or sexual orientation.
                     </p>
                 </div>
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {services.map(service => (
-                        <div key={service.name} className="group overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-300 hover:shadow-2xl">
-                           <div className="overflow-hidden">
-                             <Image 
-                               src={service.imageUrl}
-                               alt={service.name}
-                               width={400}
-                               height={300}
-                               className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                               data-ai-hint={service.hint}
-                             />
-                           </div>
-                           <div className="p-6">
-                                <h3 className="font-headline text-xl font-bold">{service.name}</h3>
-                                <p className="mt-2 text-foreground/80">{service.description}</p>
-                           </div>
-                        </div>
-                    ))}
+                <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+                    <Card className="flex flex-col">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-2xl font-bold text-secondary">Personal Care Services</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p>Personal care services shall include activities based on the assessment of the clients’ needs, including but not limited to: personal hygiene and grooming; bathing; skin care; oral hygiene; hair care; dressing; assistance with ambulation, mobility, transfers, and positioning; and assistance with exercise and range of motion.</p>
+                        </CardContent>
+                    </Card>
+                     <Card className="flex flex-col">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-2xl font-bold text-secondary">Homemaker Services</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p>Homemaker services shall be provided by personal care aides or homemakers and shall include activities based on the assessment of the clients’ needs, including but not limited to: routine and light house cleaning; care of clothing and linens; shopping for household supplies; clothing and personal essentials; running errands or picking up medication; shopping for food or preparing meals; escorting the client to medical care services or to nutritional or recreational programs; and assisting with simple health care routines such as reminders to take oral medication; to maintain diet restrictions or to perform recommended exercises.</p>
+                        </CardContent>
+                    </Card>
+                    <Card className="flex flex-col">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-2xl font-bold text-secondary">Assistance With Daily Living</CardTitle>
+                        </CardHeader>
+                         <CardContent className="flex-grow">
+                            <p>We provide support with daily activities to help our clients maintain their independence and quality of life at home.</p>
+                        </CardContent>
+                    </Card>
+                     <Card className="flex flex-col">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-2xl font-bold text-secondary">Companionship</CardTitle>
+                        </CardHeader>
+                         <CardContent className="flex-grow">
+                            <p>Our caregivers offer companionship and emotional support, engaging in activities that our clients enjoy and ensuring they feel connected.</p>
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="mt-12 text-center">
+                     <p className="text-xl font-bold text-primary pt-6">
+                        OUR PROFESSIONAL TEAM IS READY TO ASSIST AND PROVIDE EXCEPTIONAL SERVICES
+                   </p>
                 </div>
             </div>
         </section>
