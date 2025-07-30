@@ -1,3 +1,4 @@
+
 import { type NextRequest, NextResponse } from 'next/server';
 import { adminDb, adminAuth } from '@/lib/firebase-admin';
 import { z } from 'zod';
@@ -11,14 +12,19 @@ const UserDataSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Verify the user's token
+    // 1. Verify the user's token from the Authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized: Missing or invalid token.' }, { status: 401 });
     }
     const token = authHeader.split('Bearer ')[1];
     
-    const decodedToken = await adminAuth.verifyIdToken(token);
+    let decodedToken;
+    try {
+        decodedToken = await adminAuth.verifyIdToken(token);
+    } catch (error) {
+        return NextResponse.json({ message: 'Unauthorized: Invalid token.' }, { status: 401 });
+    }
     const uid = decodedToken.uid;
     
     // 2. Validate the request body
@@ -29,9 +35,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Invalid input', errors: parsedData.error.errors }, { status: 400 });
     }
     
-    // Security check: ensure the UID in the body matches the token
+    // Security check: ensure the UID in the body matches the one from the verified token
     if (parsedData.data.uid !== uid) {
-         return NextResponse.json({ message: 'UID mismatch' }, { status: 403 });
+         return NextResponse.json({ message: 'UID mismatch. Tampering detected.' }, { status: 403 });
     }
 
     // 3. Logic to determine role and status
@@ -42,7 +48,7 @@ export async function POST(req: NextRequest) {
     const role = isFirstUser ? 'admin' : 'employee';
     const status = isFirstUser ? 'approved' : 'pending';
 
-    // 4. Create the user document in Firestore
+    // 4. Create the user document in Firestore using the Admin SDK
     await adminDb.collection('users').doc(uid).set({
       uid: uid,
       email: parsedData.data.email,
