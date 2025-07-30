@@ -46,10 +46,10 @@ export function Header() {
           ))}
           {user && (
             <Link
-              href="/dashboard"
+              href={user.role === 'admin' ? "/admin" : "/dashboard"}
               className={cn(
                 "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
-                pathname === "/dashboard" && "underline underline-offset-4"
+                (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
               )}
             >
               Dashboard
@@ -96,10 +96,10 @@ export function Header() {
                   ))}
                   {user && (
                      <Link
-                       href="/dashboard"
+                       href={user.role === 'admin' ? "/admin" : "/dashboard"}
                        className={cn(
                          "font-headline text-xl font-medium",
-                         pathname === "/dashboard" && "underline underline-offset-4"
+                         (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
                        )}
                        onClick={() => setIsOpen(false)}
                      >
@@ -124,3 +124,5 @@ export function Header() {
     </header>
   );
 }
+
+    

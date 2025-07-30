@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,13 +40,16 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
+  fullName: z.string().min(1, { message: 'Full name is required.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
+  phone: z.string().min(1, { message: 'Phone number is required.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -58,19 +61,47 @@ export default function LoginPage() {
 
   const registerForm = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { fullName: '', email: '', phone: '', password: '' },
   });
 
   const handleLogin = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      toast({
-        title: 'Login Successful',
-        description: "Welcome back!",
-      });
-      router.push('/dashboard');
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
+      // Check user status in Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.status === 'pending') {
+          throw new Error('Your account is pending approval. Please contact an administrator.');
+        }
+        if (userData.status === 'rejected') {
+          throw new Error('Your account registration has been rejected. Please contact an administrator.');
+        }
+        if (userData.status === 'approved') {
+          toast({
+            title: 'Login Successful',
+            description: "Welcome back!",
+          });
+          
+          if (userData.role === 'admin') {
+            router.push('/admin');
+          } else {
+            router.push('/dashboard');
+          }
+        } else {
+            throw new Error('Invalid account status.');
+        }
+      } else {
+        throw new Error("User data not found.");
+      }
+
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -81,6 +112,7 @@ export default function LoginPage() {
   const handleRegister = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -89,21 +121,26 @@ export default function LoginPage() {
       );
       const user = userCredential.user;
 
-      // Create a user document in Firestore
+      // Create a user document in Firestore with 'pending' status
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
+        fullName: data.fullName,
+        phone: data.phone,
         role: 'employee', // Default role
+        status: 'pending', // Initial status
         createdAt: new Date(),
       });
       
-      toast({
-        title: 'Registration Successful',
-        description: 'Your account has been created.',
-      });
-      router.push('/dashboard');
+      setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
+      registerForm.reset();
+
     } catch (error: any) {
-      setError(error.message);
+       if (error.code === 'auth/email-already-in-use') {
+         setError('This email address is already in use.');
+       } else {
+         setError(error.message);
+       }
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +195,7 @@ export default function LoginPage() {
               <CardHeader>
                 <CardTitle>Register</CardTitle>
                 <CardDescription>
-                  Create a new account to get started.
+                  Create a new account. Your registration will be reviewed by an administrator.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -170,10 +207,27 @@ export default function LoginPage() {
                        <AlertDescription>{error}</AlertDescription>
                      </Alert>
                    )}
+                    {successMessage && activeTab === 'register' && (
+                     <Alert variant="default" className="bg-green-100 border-green-400 text-green-700">
+                       <AlertCircle className="h-4 w-4" />
+                       <AlertTitle>Success</AlertTitle>
+                       <AlertDescription>{successMessage}</AlertDescription>
+                     </Alert>
+                   )}
+                   <div className="space-y-2">
+                    <Label htmlFor="register-fullName">Full Name</Label>
+                    <Input id="register-fullName" type="text" placeholder="John Doe" {...registerForm.register('fullName')} />
+                     {registerForm.formState.errors.fullName && <p className="text-sm text-destructive">{registerForm.formState.errors.fullName.message}</p>}
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-email">Email</Label>
                     <Input id="register-email" type="email" placeholder="m@example.com" {...registerForm.register('email')} />
                      {registerForm.formState.errors.email && <p className="text-sm text-destructive">{registerForm.formState.errors.email.message}</p>}
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="register-phone">Phone Number</Label>
+                    <Input id="register-phone" type="tel" placeholder="123-456-7890" {...registerForm.register('phone')} />
+                     {registerForm.formState.errors.phone && <p className="text-sm text-destructive">{registerForm.formState.errors.phone.message}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="register-password">Password</Label>
@@ -194,3 +248,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

@@ -11,6 +11,7 @@ interface UserProfile {
   uid: string;
   email: string | null;
   role: 'admin' | 'employee';
+  status: 'pending' | 'approved' | 'rejected';
 }
 
 interface AuthContextType {
@@ -31,13 +32,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            role: userDoc.data()?.role || 'employee',
-          });
+           const userData = userDoc.data();
+           // Only set user if they are approved
+           if (userData.status === 'approved') {
+               setUser({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                role: userData.role || 'employee',
+                status: userData.status
+              });
+           } else {
+             // User is pending or rejected, sign them out client-side
+             auth.signOut();
+             setUser(null);
+           }
         } else {
           // Handle case where user exists in Auth but not in Firestore
+          auth.signOut();
           setUser(null);
         }
       } else {
@@ -51,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await auth.signOut();
+    setUser(null);
   };
 
   if (loading) {
@@ -75,3 +87,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
