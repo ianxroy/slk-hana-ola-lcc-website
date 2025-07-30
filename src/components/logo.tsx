@@ -4,7 +4,7 @@ export function Logo() {
   return (
     <div className="flex items-center gap-2">
        <Image 
-            src="/logo.svg"
+            src="/images/SLKlogo.png"
             alt="SLK Hana Ola Logo"
             width={40}
             height={40}
