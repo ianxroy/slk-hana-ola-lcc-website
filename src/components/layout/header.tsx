@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { LoginDialog } from '@/components/login-dialog';
 import { Logo } from '../logo';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/auth-context';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -18,12 +19,12 @@ const navLinks = [
   { href: '/testimonials', label: 'Testimonials' },
   { href: '/employment', label: 'Employment' },
   { href: '/contact', label: 'Contact Us' },
-  { href: '/dashboard', label: 'Dashboard' },
 ];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { isLoggedIn } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-[#00A7A9] text-primary-foreground backdrop-blur-sm">
@@ -44,6 +45,17 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          {isLoggedIn && (
+            <Link
+              href="/dashboard"
+              className={cn(
+                "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
+                pathname === "/dashboard" && "underline underline-offset-4"
+              )}
+            >
+              Dashboard
+            </Link>
+          )}
           <LoginDialog />
         </nav>
         <div className="md:hidden">
@@ -77,6 +89,18 @@ export function Header() {
                       {link.label}
                     </Link>
                   ))}
+                  {isLoggedIn && (
+                     <Link
+                       href="/dashboard"
+                       className={cn(
+                         "font-headline text-xl font-medium",
+                         pathname === "/dashboard" && "underline underline-offset-4"
+                       )}
+                       onClick={() => setIsOpen(false)}
+                     >
+                       Dashboard
+                     </Link>
+                  )}
                   <div className="pt-4">
                     <LoginDialog />
                   </div>

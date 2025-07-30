@@ -13,9 +13,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React from "react";
+import { useAuth } from "@/context/auth-context";
 
 export function LoginDialog() {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { isLoggedIn, login, logout } = useAuth();
+
+  const handleLogin = () => {
+    login();
+    setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
+
+  if (isLoggedIn) {
+    return <Button onClick={handleLogout}>Logout</Button>;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -44,7 +60,7 @@ export function LoginDialog() {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={() => setIsOpen(false)} type="submit">Login</Button>
+          <Button onClick={handleLogin} type="submit">Login</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
