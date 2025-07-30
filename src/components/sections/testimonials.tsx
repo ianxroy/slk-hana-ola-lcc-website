@@ -39,12 +39,12 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
     <section id="testimonials" className="w-full bg-accent/10 py-12 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-3xl text-center space-y-4">
-          <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-fade-in-up">What Our Clients Say</h2>
+          <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl animate-text-reveal">What Our Clients Say</h2>
           <p className="text-lg text-foreground/80 animate-fade-in-up">
               Real stories from families we've had the privilege to serve.
           </p>
           </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3">
+          <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
           {displayedTestimonials.map((testimonial) => (
               <Card key={testimonial.name} className="flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up">
               <CardHeader className="flex-row items-center gap-4 pb-4">
@@ -53,8 +53,8 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                   <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>
-                  <CardTitle className="text-lg font-bold animate-fade-in-up">{testimonial.name}</CardTitle>
-                  <div className="flex items-center gap-0.5 animate-stars">
+                  <CardTitle className="text-lg font-bold animate-text-reveal">{testimonial.name}</CardTitle>
+                  <div className="flex items-center gap-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                           key={i}
