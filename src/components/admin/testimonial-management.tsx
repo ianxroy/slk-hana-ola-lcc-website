@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, PlusCircle, Trash2, Edit, Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useAuth } from '@/context/auth-context';
 
 interface Testimonial {
   id: string;
@@ -22,9 +23,11 @@ interface Testimonial {
   rating: number;
   image?: string; 
   createdAt: Timestamp;
+  authorUid?: string;
 }
 
 export function TestimonialManagement() {
+  const { user } = useAuth();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +68,10 @@ export function TestimonialManagement() {
         toast({ variant: 'destructive', title: 'Error', description: 'Please fill out all required fields.'});
         return;
     }
+    if (!user) {
+        toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in to perform this action.'});
+        return;
+    }
     setIsSubmitting(true);
     let imageUrl = currentTestimonial?.image;
 
@@ -85,10 +92,8 @@ export function TestimonialManagement() {
       if (imageUrl) {
         dataToSave.image = imageUrl;
       } else if (currentTestimonial?.id && !currentTestimonial.image) {
-        // If editing and no image existed, ensure it's an empty string
         dataToSave.image = '';
       } else if (!currentTestimonial?.id) {
-        // If creating new and no image, ensure it's an empty string
         dataToSave.image = '';
       }
 
@@ -99,6 +104,7 @@ export function TestimonialManagement() {
       } else { // Adding new
         await addDoc(collection(db, 'testimonials'), {
           ...dataToSave,
+          authorUid: user.uid, // Add author's UID
           createdAt: Timestamp.now(),
         });
         toast({ title: 'Success', description: 'Testimonial added successfully.' });
