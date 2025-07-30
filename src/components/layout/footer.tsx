@@ -49,7 +49,7 @@ export function Footer() {
               </p>
               <p className="flex items-center gap-2">
                 <Facebook className="h-5 w-5" />
-                <a href="#" className="hover:underline">Facebook</a>
+                <a href="https://www.facebook.com/slk.hanaola/" target="_blank" rel="noopener noreferrer" className="hover:underline">Facebook</a>
               </p>
             </address>
           </div>
