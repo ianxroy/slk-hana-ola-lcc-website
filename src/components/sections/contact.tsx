@@ -21,7 +21,7 @@ import React from 'react';
 import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const ContactFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -37,7 +37,7 @@ type ContactSectionProps = {
     isPreview?: boolean;
 };
 
-const ContactFormContent = ({ isPreview }: ContactSectionProps) => {
+export function ContactSection({ isPreview = false }: ContactSectionProps) {
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const { executeRecaptcha } = useGoogleReCaptcha();
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -245,25 +245,3 @@ const ContactFormContent = ({ isPreview }: ContactSectionProps) => {
         </section>
     );
 };
-
-export function ContactSection({ isPreview = false }: ContactSectionProps) {
-    const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-
-    if (!recaptchaKey) {
-        return (
-            <section className="w-full bg-background py-12 md:py-24">
-                <div className="container mx-auto px-4 md:px-6 text-center">
-                    <p className="text-destructive">
-                        reCAPTCHA Site Key is missing. The contact form cannot be displayed.
-                    </p>
-                </div>
-            </section>
-        );
-    }
-    
-    return (
-        <GoogleReCaptchaProvider reCaptchaKey={recaptchaKey}>
-            <ContactFormContent isPreview={isPreview} />
-        </GoogleReCaptchaProvider>
-    );
-}

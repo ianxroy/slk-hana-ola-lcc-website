@@ -6,6 +6,7 @@ import { ServicesSection } from '@/components/sections/services';
 import { EmploymentSection } from '@/components/sections/employment';
 import { ContactSection } from '@/components/sections/contact';
 import { GsapScrollAnimator } from '@/components/animations/gsap-scroll-animator';
+import { TestimonialsSection } from '@/components/sections/testimonials';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <HeroSection />
           <AboutSection isPreview />
           <ServicesSection />
+          <TestimonialsSection isPreview />
           <EmploymentSection isPreview />
           <ContactSection isPreview />
         </GsapScrollAnimator>
