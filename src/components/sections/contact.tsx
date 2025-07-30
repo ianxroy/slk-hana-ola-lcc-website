@@ -48,10 +48,12 @@ export function ContactSection() {
     form.reset();
   }
 
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY';
+
   return (
     <section
       id="contact"
-      className="scroll-animate min-h-screen snap-start w-full flex items-center justify-center py-12 md:py-24"
+      className="scroll-animate w-full bg-background py-12 md:py-24"
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -71,7 +73,7 @@ export function ContactSection() {
                 height="100%"
                 frameBorder="0"
                 style={{ border: 0 }}
-                src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=21.399840439194396,-158.02250355092343"
+                src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=21.399840439194396,-158.02250355092343`}
                 allowFullScreen
               ></iframe>
             </div>
