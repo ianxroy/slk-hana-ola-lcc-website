@@ -51,13 +51,14 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     });
 
-    return NextResponse.json({ message: 'Registration successful!' }, { status: 201 });
+    return NextResponse.json({ message: 'Registration successful! You will be redirected shortly.' }, { status: 201 });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: 'Invalid form data.', errors: error.errors }, { status: 400 });
     }
     console.error('Registration API Error:', error);
-    return NextResponse.json({ message: 'An unexpected error occurred during registration.' }, { status: 500 });
+    // This is the crucial part: always return a JSON response, even on unexpected server errors.
+    return NextResponse.json({ message: 'An unexpected error occurred during registration. Please contact support.' }, { status: 500 });
   }
 }

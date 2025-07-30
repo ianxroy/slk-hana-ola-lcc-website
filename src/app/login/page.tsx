@@ -127,7 +127,14 @@ export default function LoginPage() {
             throw new Error(result.message || 'An unexpected error occurred.');
         }
         
-        router.push('/registration-pending');
+        toast({
+            title: "Registration Submitted!",
+            description: "Your request is pending approval. You will be redirected.",
+        });
+
+        setTimeout(() => {
+            router.push('/registration-pending');
+        }, 2000)
 
     } catch (error: any) {
         setError(error.message || "An unexpected error occurred during registration.");
