@@ -10,11 +10,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Merriweather', 'serif'],
-        headline: ['Montserrat', 'sans-serif'],
+        body: ['PT Sans', 'sans-serif'],
+        headline: ['Playfair Display', 'serif'],
         code: ['monospace'],
       },
       colors: {
+        'red-pink': '#E85763',
         'yellow-orange': '#FFCC4D',
         'light-green': '#C4EA8A',
         background: 'hsl(var(--background))',

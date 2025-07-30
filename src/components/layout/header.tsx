@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Logo } from '@/components/logo';
 import { LoginDialog } from '@/components/login-dialog';
+import { Logo } from '../logo';
 
 const navLinks = [
   { href: '/', label: 'Home' },

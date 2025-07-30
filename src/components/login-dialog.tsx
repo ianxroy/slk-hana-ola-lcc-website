@@ -20,7 +20,7 @@ export function LoginDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="bg-yellow-orange hover:bg-yellow-orange/90 text-black">Login</Button>
+        <Button>Login</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -44,7 +44,7 @@ export function LoginDialog() {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={() => setIsOpen(false)} type="submit" className="hover:bg-yellow-orange">Login</Button>
+          <Button onClick={() => setIsOpen(false)} type="submit">Login</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
