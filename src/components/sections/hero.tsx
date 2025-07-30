@@ -18,20 +18,20 @@ export function HeroSection() {
               priority
             />
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/50 p-6">
-            <h1 className="font-headline text-4xl font-bold tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/60 p-6">
+            <h1 className="font-headline text-5xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
               PROVIDING THE HIGHEST QUALITY HEALTHCARE AT HOME
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-white/90 md:text-xl">
+            <p className="mt-6 max-w-3xl text-xl text-white/90 md:text-2xl">
               SLK Hana Ola provides exceptional healthcare services with a personal touch. We are dedicated to the well-being of our community, one patient at a time.
             </p>
           </div>
         </div>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Button asChild size="lg" className="hover:bg-yellow-orange">
+          <Button asChild size="lg" className="hover:bg-yellow-orange text-lg">
             <Link href="#about">Learn More About Us</Link>
           </Button>
-          <Button asChild size="lg" variant="secondary">
+          <Button asChild size="lg" variant="secondary" className="text-lg">
             <Link href="#services">Our Services</Link>
           </Button>
         </div>

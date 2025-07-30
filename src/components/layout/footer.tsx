@@ -7,12 +7,12 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8 md:px-6">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <Logo />
-          <p className="text-center text-sm md:text-left">
+          <p className="text-center text-base md:text-left">
             &copy; {new Date().getFullYear()} SLK Hana Ola, LLC. All rights reserved.
           </p>
           <div className="flex gap-4">
-            <Link href="#" className="text-sm hover:underline">Privacy Policy</Link>
-            <Link href="#" className="text-sm hover:underline">Terms of Service</Link>
+            <Link href="#" className="text-base hover:underline">Privacy Policy</Link>
+            <Link href="#" className="text-base hover:underline">Terms of Service</Link>
           </div>
         </div>
       </div>
