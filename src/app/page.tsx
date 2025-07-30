@@ -7,6 +7,7 @@ import { EmploymentSection } from '@/components/sections/employment';
 import { ContactSection } from '@/components/sections/contact';
 import { PromoBanner } from '@/components/sections/promo-banner';
 import { TestimonialsSection } from '@/components/sections/testimonials';
+import { GsapScrollAnimator } from '@/components/animations/gsap-scroll-animator';
 
 export default function Home() {
   return (
@@ -14,12 +15,14 @@ export default function Home() {
       <Header />
       <PromoBanner />
       <main className="flex-1">
+        <GsapScrollAnimator>
           <HeroSection />
           <AboutSection isPreview />
           <ServicesSection isPreview />
           <TestimonialsSection isPreview />
           <EmploymentSection isPreview />
           <ContactSection isPreview />
+        </GsapScrollAnimator>
       </main>
       <Footer />
     </div>

@@ -19,7 +19,7 @@ export function HeroSection() {
             />
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-black/60 p-6">
-            <h1 className="font-headline text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl animate-fade-in-up">
+            <h1 className="font-headline text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl animate-fade-in-up">
               PROVIDING THE HIGHEST QUALITY HEALTHCARE AT HOME
             </h1>
             <p className="mt-6 max-w-3xl text-lg text-white/90 md:text-xl animate-fade-in-up">
