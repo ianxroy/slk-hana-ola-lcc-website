@@ -1,6 +1,4 @@
 
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
@@ -8,48 +6,40 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useEffect, useState, useCallback } from "react";
-import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
-import { db } from "@/lib/firebase";
-import { Skeleton } from "../ui/skeleton";
 
-interface Testimonial {
-  id: string;
-  name: string;
-  quote: string;
-  rating: number;
-  image?: string;
-  createdAt: Timestamp;
-}
+const testimonials = [
+  {
+    name: "John D.",
+    avatar: "JD",
+    rating: 5,
+    quote: "SLK Hana Ola, LLC has been a blessing for our family. The caregivers are compassionate, professional, and have taken wonderful care of my mother.",
+    image: "/images/testimonial_john.jpg",
+    imageHint: "happy senior man"
+  },
+  {
+    name: "Sarah P.",
+    avatar: "SP",
+    rating: 5,
+    quote: "The team at SLK Hana Ola, LLC is incredibly reliable and attentive. I can finally have peace of mind knowing my father is in good hands.",
+    image: "/images/testimonial_sarah.jpg",
+    imageHint: "smiling woman"
+  },
+  {
+    name: "Mike R.",
+    avatar: "MR",
+    rating: 4,
+    quote: "Their personalized care plan was exactly what we needed. The staff is friendly and always goes the extra mile. Highly recommended!",
+    image: "/images/testimonial_mike.jpg",
+    imageHint: "content person"
+  }
+];
 
 type TestimonialsSectionProps = {
     isPreview?: boolean;
 };
 
 export function TestimonialsSection({ isPreview = false }: TestimonialsSectionProps) {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchTestimonials = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const testimonialsCollection = collection(db, 'testimonials');
-      const q = query(testimonialsCollection, orderBy('createdAt', 'desc'));
-      const testimonialSnapshot = await getDocs(q);
-      const testimonialsList = testimonialSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial));
-      setTestimonials(testimonialsList);
-    } catch (error) {
-      console.error("Error fetching testimonials:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTestimonials();
-  }, [fetchTestimonials]);
-
-  const displayedTestimonials = isPreview ? testimonials.slice(0, 4) : testimonials;
+    const displayedTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
 
   return (
     <section id="testimonials" className="w-full bg-background py-12 md:py-24">
@@ -65,56 +55,39 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
               </a>
           </div>
           </div>
-          
-          {isLoading ? (
-            <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="space-y-4">
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-6 w-1/2" />
-                    </div>
-                ))}
-            </div>
-          ) : (
-            <div className="mt-12 flex flex-wrap justify-center gap-8">
-                {displayedTestimonials.map((testimonial) => (
-                    <Card 
-                        key={testimonial.id} 
-                        className={cn(
-                            "testimonial-card flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl w-full md:w-96",
-                            testimonial.rating === 5 && "five-star-glow"
-                        )}
-                    >
-                    <CardHeader className="flex-row items-center gap-4 pb-4">
-                        <Avatar>
-                        <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                        <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                        <CardTitle className="text-lg font-bold">{testimonial.name}</CardTitle>
-                        <div className="flex items-center gap-0.5">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                                key={i}
-                                className={cn(
-                                    "star h-5 w-5", 
-                                    i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'
-                                )}
-                            />
-                            ))}
-                        </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-base italic">"{testimonial.quote}"</p>
-                    </CardContent>
-                    </Card>
-                ))}
-            </div>
-          )}
-          
-          {isPreview && testimonials.length > 4 && (
+          <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
+          {displayedTestimonials.map((testimonial) => (
+              <Card 
+                key={testimonial.name} 
+                className={cn(
+                    "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up",
+                    testimonial.rating === 5 && "five-star-glow"
+                )}
+              >
+              <CardHeader className="flex-row items-center gap-4 pb-4">
+                  <Avatar>
+                  <AvatarImage src={testimonial.image} />
+                  <AvatarFallback>{testimonial.avatar}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                  <CardTitle className="text-lg font-bold animate-text-reveal">{testimonial.name}</CardTitle>
+                  <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                          key={i}
+                          className={`star h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
+                      />
+                      ))}
+                  </div>
+                  </div>
+              </CardHeader>
+              <CardContent>
+                  <p className="text-base italic animate-fade-in-up">"{testimonial.quote}"</p>
+              </CardContent>
+              </Card>
+          ))}
+          </div>
+          {isPreview && (
               <div className="text-center mt-12 animate-fade-in-up">
                   <Button asChild size="lg">
                       <Link href="/testimonials">Read More Testimonials</Link>

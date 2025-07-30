@@ -18,8 +18,8 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const commonScrollTrigger = {
-        start: 'top 90%', // Start animation when element top hits 90% from viewport top
-        end: 'bottom 20%', // End animation when element bottom hits 20% from viewport top
+        start: 'top 80%', // Start animation when element top hits 80% from viewport top
+        end: 'bottom 20%', // End animation when element bottom hits 30% from viewport top
         toggleActions: 'play reverse play reverse',
       };
       
@@ -81,20 +81,9 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
         });
 
       // Star animation
-      const testimonialCards = gsap.utils.toArray<HTMLElement>('.testimonial-card');
+      const testimonialCards = gsap.utils.toArray<HTMLElement>('#testimonials .animate-fade-in-up');
       testimonialCards.forEach((card) => {
         const stars = gsap.utils.toArray<HTMLElement>('.star', card);
-        
-        gsap.fromTo(card, { autoAlpha: 0, y: 50 }, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-                trigger: card,
-                ...commonScrollTrigger
-            }
-        });
         
         const tl = gsap.timeline({
           scrollTrigger: {
