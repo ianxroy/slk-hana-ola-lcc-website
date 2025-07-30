@@ -120,7 +120,7 @@ export function PromoBanner() {
                             </div>
                         )}
                         <div className={cn(
-                          "relative overflow-hidden rounded-lg shadow-lg h-[300px]",
+                          "relative overflow-hidden rounded-lg shadow-lg",
                           !hasTextContent && "col-span-full"
                         )}>
                           <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
