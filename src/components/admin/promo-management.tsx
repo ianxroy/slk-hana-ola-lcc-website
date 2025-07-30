@@ -65,22 +65,28 @@ export function PromoManagement() {
     let imageUrl = currentPromo?.imageUrl;
 
     try {
+      // Only upload if a new file is selected
       if (imageFile) {
         const storageRef = ref(storage, `promotions/${Date.now()}_${imageFile.name}`);
         const snapshot = await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(snapshot.ref);
       }
 
-      if (!imageUrl) {
-        throw new Error("An image is required to save the promotion.");
+      if (!currentPromo?.id && !imageUrl) {
+        toast({ variant: 'destructive', title: 'Error', description: 'An image is required for a new promotion.' });
+        setIsSubmitting(false);
+        return;
       }
-
-      const dataToSave = {
+      
+      const dataToSave: any = {
         title: currentPromo?.title || '',
         description: currentPromo?.description || '',
         link: currentPromo?.link || '#',
-        imageUrl: imageUrl,
       };
+
+      if (imageUrl) {
+        dataToSave.imageUrl = imageUrl;
+      }
 
       if (currentPromo?.id) { // Editing existing promo
         const promoDoc = doc(db, 'promotions', currentPromo.id);
@@ -160,7 +166,7 @@ export function PromoManagement() {
                   <Input id="link" value={currentPromo?.link || ''} onChange={e => setCurrentPromo({...currentPromo, link: e.target.value})} placeholder="#services" />
                </div>
                <div>
-                 <Label htmlFor="image">Image</Label>
+                 <Label htmlFor="image">Image {currentPromo?.id ? '(optional)' : '*'}</Label>
                  <Input id="image" type="file" onChange={handleFileChange} accept="image/*" />
                  {currentPromo?.imageUrl && !imageFile && <Image src={currentPromo.imageUrl} alt="Current promo image" width={100} height={100} className="mt-2 rounded-md" />}
                </div>

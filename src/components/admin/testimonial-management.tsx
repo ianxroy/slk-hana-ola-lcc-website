@@ -69,18 +69,28 @@ export function TestimonialManagement() {
     let imageUrl = currentTestimonial?.image;
 
     try {
+      // Only upload if a new file is selected
       if (imageFile) {
         const storageRef = ref(storage, `testimonials/${Date.now()}_${imageFile.name}`);
         const snapshot = await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(snapshot.ref);
       }
 
-      const dataToSave = {
+      const dataToSave: any = {
         name: currentTestimonial.name,
         quote: currentTestimonial.quote,
         rating: Number(currentTestimonial.rating),
-        image: imageUrl || '',
       };
+
+      if (imageUrl) {
+        dataToSave.image = imageUrl;
+      } else if (currentTestimonial?.id && !currentTestimonial.image) {
+        // If editing and no image existed, ensure it's an empty string
+        dataToSave.image = '';
+      } else if (!currentTestimonial?.id) {
+        // If creating new and no image, ensure it's an empty string
+        dataToSave.image = '';
+      }
 
       if (currentTestimonial?.id) { // Editing existing
         const testimonialDoc = doc(db, 'testimonials', currentTestimonial.id);
