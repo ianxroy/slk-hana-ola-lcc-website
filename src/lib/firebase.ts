@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,5 +21,16 @@ if (!getApps().length) {
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Enable offline persistence
+try {
+    enableIndexedDbPersistence(db);
+} catch (error: any) {
+    if (error.code === 'failed-precondition') {
+        console.warn('Firestore persistence failed: Multiple tabs open. Persistence can only be enabled in one tab at a time.');
+    } else if (error.code === 'unimplemented') {
+        console.warn('Firestore persistence failed: The current browser does not support all of the features required to enable persistence.');
+    }
+}
 
 export { app, auth, db };
