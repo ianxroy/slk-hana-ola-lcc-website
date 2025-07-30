@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const testimonials = [
   {
@@ -46,7 +47,13 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
           </div>
           <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
           {displayedTestimonials.map((testimonial) => (
-              <Card key={testimonial.name} className="flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up">
+              <Card 
+                key={testimonial.name} 
+                className={cn(
+                    "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up",
+                    testimonial.rating === 5 && "five-star-glow"
+                )}
+              >
               <CardHeader className="flex-row items-center gap-4 pb-4">
                   <Avatar>
                   <AvatarImage src={`https://placehold.co/40x40.png?text=${testimonial.avatar}`} data-ai-hint={testimonial.imageHint} />
