@@ -17,7 +17,6 @@ interface RegistrationRequest {
   email: string;
   fullName: string;
   phone: string;
-  // password is intentionally not stored or retrieved for security
   role: 'admin' | 'employee';
   status: 'pending' | 'rejected';
   createdAt: {
@@ -46,6 +45,7 @@ const TempPasswordDisplay = ({ password }: { password: string }) => {
                            <Copy className="h-4 w-4" />
                         </Button>
                     </div>
+                     <p className="text-xs text-muted-foreground">They will be prompted to change it upon first login.</p>
                 </div>
             </AlertDescription>
         </Alert>
@@ -126,7 +126,7 @@ export function UserManagement() {
             body: JSON.stringify({
                 docId: request.id,
                 email: request.email,
-                password: tempPassword, // Use the generated temporary password
+                password: tempPassword,
                 fullName: request.fullName,
                 phone: request.phone,
                 role: request.role,
@@ -140,6 +140,7 @@ export function UserManagement() {
         }
 
         toast({
+            title: 'Success!',
             description: <TempPasswordDisplay password={tempPassword} />,
             duration: 30000, // Give admin time to copy the password
         });
