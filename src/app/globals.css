@@ -68,6 +68,6 @@
   
   html {
     scroll-behavior: smooth;
-    @apply text-lg;
+    @apply text-base;
   }
 }
