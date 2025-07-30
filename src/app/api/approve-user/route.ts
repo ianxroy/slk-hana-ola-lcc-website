@@ -1,6 +1,6 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { getFirebaseAdmin } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
 const approveUserSchema = z.object({
@@ -14,6 +14,7 @@ const approveUserSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const { adminAuth, adminDb } = await getFirebaseAdmin();
     // 1. Validate the incoming request body
     const body = await req.json();
     const { docId, email, password, fullName, phone, role } = approveUserSchema.parse(body);
@@ -48,10 +49,11 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: 'Invalid request data.', errors: error.errors }, { status: 400 });
     }
-    if ((error as any).code === 'auth/email-already-exists') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'auth/email-already-exists') {
         return NextResponse.json({ message: 'This email is already in use by an existing user.' }, { status: 409 });
     }
-    console.error('An unexpected error occurred:', error);
-    return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });
+    console.error('An unexpected error occurred in /api/approve-user:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

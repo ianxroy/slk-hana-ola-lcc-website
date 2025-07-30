@@ -1,31 +1,58 @@
 
 import * as admin from 'firebase-admin';
 
-// Ensure the environment variable is set
-const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-if (!serviceAccountString) {
-  throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set. Please add it to your .env.local file.');
-}
+let adminApp: admin.app.App | null = null;
 
-let serviceAccount;
-try {
-    serviceAccount = JSON.parse(serviceAccountString);
-} catch (error) {
-    throw new Error('Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY. Make sure it is a valid JSON string.');
-}
+function initializeAdminApp() {
+  if (admin.apps.length > 0) {
+    adminApp = admin.app();
+    return;
+  }
 
+  const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (!serviceAccountString) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set.');
+  }
 
-// Initialize Firebase Admin SDK if not already initialized
-if (!admin.apps.length) {
   try {
-    admin.initializeApp({
+    const serviceAccount = JSON.parse(serviceAccountString);
+    adminApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
   } catch (error: any) {
-    console.error('Firebase Admin initialization error', error.stack);
-    throw new Error('Failed to initialize Firebase Admin SDK.');
+    console.error('Firebase Admin initialization error:', error.stack);
+    throw new Error('Failed to initialize Firebase Admin SDK. Please check your FIREBASE_SERVICE_ACCOUNT_KEY.');
   }
 }
 
-export const adminDb = admin.firestore();
-export const adminAuth = admin.auth();
+async function getFirebaseAdmin() {
+    if (!adminApp) {
+        initializeAdminApp();
+    }
+    if (!adminApp) {
+        // This should not happen if initializeAdminApp works correctly.
+        throw new Error("Firebase Admin SDK is not initialized.");
+    }
+    return {
+        adminDb: admin.firestore(adminApp),
+        adminAuth: admin.auth(adminApp),
+    };
+}
+
+// Export the getter function
+export { getFirebaseAdmin };
+
+// For direct use in older files if needed, though getFirebaseAdmin is preferred
+try {
+  if (!adminApp) {
+    initializeAdminApp();
+  }
+} catch (e) {
+  // Log error during initial load but don't re-throw, allow getFirebaseAdmin to handle it.
+  console.error("Initial Firebase Admin SDK load failed:", e);
+}
+
+// Note: Direct exports might not be fully initialized on cold boot.
+// It's safer to use the async `getFirebaseAdmin` function in API routes.
+export const adminDb = adminApp ? admin.firestore(adminApp) : admin.firestore();
+export const adminAuth = adminApp ? admin.auth(adminApp) : admin.auth();
