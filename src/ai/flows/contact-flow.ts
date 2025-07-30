@@ -1,64 +1,51 @@
-{
-  "name": "nextn",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack -p 9002",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+
+'use server';
+/**
+ * @fileOverview A Genkit flow for processing contact form submissions.
+ *
+ * This file defines a Genkit flow that takes contact form data as input,
+ * sends an email using a service, and returns a success or failure message.
+ * It's designed to be called from the contact form on the client-side.
+ */
+
+import { ai } from '@/ai/genkit';
+import {
+  ContactFormInputSchema,
+  ContactFormOutputSchema,
+} from './contact-schema';
+
+/**
+ * A flow to handle the submission of the contact form.
+ * In a real-world scenario, this flow would integrate with an email sending service.
+ * For this example, it simulates a successful submission.
+ */
+const contactFormFlow = ai.defineFlow(
+  {
+    name: 'contactFormFlow',
+    inputSchema: ContactFormInputSchema,
+    outputSchema: ContactFormOutputSchema,
   },
-  "dependencies": {
-    "@hookform/resolvers": "^4.1.3",
-    "@radix-ui/react-accordion": "^1.2.3",
-    "@radix-ui/react-alert-dialog": "^1.1.6",
-    "@radix-ui/react-avatar": "^1.1.3",
-    "@radix-ui/react-checkbox": "^1.1.4",
-    "@radix-ui/react-collapsible": "^1.1.11",
-    "@radix-ui/react-dialog": "^1.1.6",
-    "@radix-ui/react-dropdown-menu": "^2.1.6",
-    "@radix-ui/react-label": "^2.1.2",
-    "@radix-ui/react-menubar": "^1.1.6",
-    "@radix-ui/react-popover": "^1.1.6",
-    "@radix-ui/react-progress": "^1.1.2",
-    "@radix-ui/react-radio-group": "^1.2.3",
-    "@radix-ui/react-scroll-area": "^1.2.3",
-    "@radix-ui/react-select": "^2.1.6",
-    "@radix-ui/react-separator": "^1.1.2",
-    "@radix-ui/react-slider": "^1.2.3",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-switch": "^1.1.3",
-    "@radix-ui/react-tabs": "^1.1.3",
-    "@radix-ui/react-toast": "^1.2.6",
-    "@radix-ui/react-tooltip": "^1.1.8",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "date-fns": "^3.6.0",
-    "dotenv": "^16.5.0",
-    "embla-carousel-autoplay": "^8.1.3",
-    "embla-carousel-react": "^8.6.0",
-    "firebase": "^11.9.1",
-    "gsap": "^3.12.5",
-    "lucide-react": "^0.475.0",
-    "next": "15.3.3",
-    "patch-package": "^8.0.0",
-    "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
-    "react-hook-form": "^7.54.2",
-    "recharts": "^2.15.1",
-    "split-type": "^0.3.4",
-    "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+  async (input) => {
+    console.log('Received contact form submission:', input);
+
+    // TODO: Implement actual email sending logic here (e.g., using SendGrid, Nodemailer, or another service).
+    // For now, we'll just simulate a successful response.
+
+    return {
+      success: true,
+      message: 'Thank you for your message. We will get back to you shortly.',
+    };
   }
+);
+
+/**
+ * Publicly exported function to be called from the client-side.
+ * It wraps the Genkit flow and provides a clean async interface.
+ * @param input The contact form data.
+ * @returns A promise that resolves to the output of the flow.
+ */
+export async function submitContactForm(
+  input: import('./contact-schema').ContactFormInput
+) {
+  return await contactFormFlow(input);
 }
