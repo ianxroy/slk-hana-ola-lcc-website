@@ -1,22 +1,22 @@
+
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 
 const libraries = [
-    { name: 'Next.js', link: 'https://nextjs.org/' },
-    { name: 'React', link: 'https://react.dev/' },
-    { name: 'Tailwind CSS', link: 'https://tailwindcss.com/' },
-    { name: 'TypeScript', link: 'https://www.typescriptlang.org/' },
-    { name: 'Firebase', link: 'https://firebase.google.com/' },
-    { name: 'Shadcn/UI', link: 'https://ui.shadcn.com/' },
-    { name: 'Lucide React', link: 'https://lucide.dev/' },
-    { name: 'GSAP', link: 'https://gsap.com/' },
-    { name: 'EmailJS', link: 'https://www.emailjs.com/' },
-    { name: 'Zod', link: 'https://zod.dev/' },
-    { name: 'React Hook Form', link: 'https://react-hook-form.com/' },
-    { name: 'Google Fonts', link: 'https://fonts.google.com/' },
+    { name: 'Next.js', link: 'https://nextjs.org/', description: 'The React framework for building the full-stack web application, handling routing, rendering, and server-side logic.' },
+    { name: 'React', link: 'https://react.dev/', description: 'The JavaScript library for building the user interface components.' },
+    { name: 'Tailwind CSS', link: 'https://tailwindcss.com/', description: 'A utility-first CSS framework for styling the application.' },
+    { name: 'TypeScript', link: 'https://www.typescriptlang.org/', description: 'The language used for writing the application code, providing static typing.' },
+    { name: 'Firebase', link: 'https://firebase.google.com/', description: 'The backend platform used for authentication, database (Firestore), and file storage.' },
+    { name: 'Shadcn/UI', link: 'https://ui.shadcn.com/', description: 'A collection of re-usable UI components built on top of Radix UI and Tailwind CSS.' },
+    { name: 'Lucide React', link: 'https://lucide.dev/', description: 'The icon library used throughout the application.' },
+    { name: 'GSAP', link: 'https://gsap.com/', description: 'A JavaScript library for creating high-performance animations.' },
+    { name: 'EmailJS', link: 'https://www.emailjs.com/', description: 'A service used to send emails from the contact form without a dedicated backend.' },
+    { name: 'Zod', link: 'https://zod.dev/', description: 'A TypeScript-first schema declaration and validation library, used for form validation.' },
+    { name: 'React Hook Form', link: 'https://react-hook-form.com/', description: 'A library for managing form state and validation in React.' },
+    { name: 'Google Fonts', link: 'https://fonts.google.com/', description: 'A library of open-source fonts used for the site\'s typography (Poppins and PT Sans).' },
 ];
 
 export default function CreditsPage() {
@@ -64,15 +64,16 @@ export default function CreditsPage() {
                 </p>
               </CardHeader>
               <CardContent>
-                 <div className="flex flex-wrap gap-4">
+                 <ul className="space-y-6">
                   {libraries.map((lib) => (
-                    <Link key={lib.name} href={lib.link} target="_blank" rel="noopener noreferrer">
-                      <Badge variant="secondary" className="text-base px-4 py-2 transition-transform hover:scale-105">
-                        {lib.name}
-                      </Badge>
-                    </Link>
+                    <li key={lib.name} className="border-b pb-4 last:border-b-0">
+                       <Link href={lib.link} target="_blank" rel="noopener noreferrer">
+                        <h3 className="text-xl font-bold text-secondary underline hover:text-secondary/80">{lib.name}</h3>
+                      </Link>
+                      <p className="mt-2 text-base text-foreground/90">{lib.description}</p>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </CardContent>
             </Card>
           </div>
