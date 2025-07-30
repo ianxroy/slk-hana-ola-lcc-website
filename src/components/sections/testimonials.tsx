@@ -77,12 +77,12 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                 ))}
             </div>
           ) : (
-            <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 stagger-container">
+            <div className="mt-12 flex flex-wrap justify-center gap-8 stagger-container">
                 {displayedTestimonials.map((testimonial) => (
                     <Card 
                         key={testimonial.id} 
                         className={cn(
-                            "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up",
+                            "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up w-full md:w-auto md:max-w-sm",
                             testimonial.rating === 5 && "five-star-glow"
                         )}
                     >
