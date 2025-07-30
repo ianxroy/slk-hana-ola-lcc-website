@@ -18,9 +18,9 @@ export default function Home() {
           <ServicesSection />
           <EmploymentSection />
           <ContactSection />
-          <Footer />
         </GsapScrollAnimator>
       </main>
+      <Footer />
     </div>
   );
 }
