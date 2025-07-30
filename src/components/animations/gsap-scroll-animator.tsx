@@ -98,6 +98,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
           scale: 0,
           stagger: 0.1,
           ease: 'back.out(1.7)',
+          duration: 1,
         });
 
         // Twinkle animation for each star, starts after the 'in' animation
