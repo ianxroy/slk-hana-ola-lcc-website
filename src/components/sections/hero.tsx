@@ -29,7 +29,7 @@ export function HeroSection() {
         </div>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row animate-fade-in-up">
           <Button asChild size="lg">
-            <Link href="#about">Learn More About Us</Link>
+            <Link href="/about">Learn More About Us</Link>
           </Button>
           <Button asChild size="lg" variant="secondary">
             <Link href="#services">Our Services</Link>
