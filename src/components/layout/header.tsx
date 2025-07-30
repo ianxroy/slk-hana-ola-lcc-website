@@ -18,6 +18,7 @@ const navLinks = [
   { href: '/testimonials', label: 'Testimonials' },
   { href: '/employment', label: 'Employment' },
   { href: '/contact', label: 'Contact Us' },
+  { href: '/dashboard', label: 'Dashboard' },
 ];
 
 export function Header() {
