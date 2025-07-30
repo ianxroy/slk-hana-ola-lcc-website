@@ -25,104 +25,115 @@ export function Header() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
+  const MobileNavMenu = () => (
+     <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Open navigation menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background text-foreground">
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b p-4">
+            <Logo isDark/>
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close navigation menu</span>
+            </Button>
+          </div>
+          <nav className="flex flex-col items-start gap-4 p-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "font-headline text-xl font-medium",
+                  pathname === link.href && "underline underline-offset-4"
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {user && (
+               <Link
+                 href={user.role === 'admin' ? "/admin" : "/dashboard"}
+                 className={cn(
+                   "font-headline text-xl font-medium",
+                   (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
+                 )}
+                 onClick={() => setIsOpen(false)}
+               >
+                 Dashboard
+               </Link>
+            )}
+            <div className="pt-4">
+               {user ? (
+                  <Button onClick={() => { logout(); setIsOpen(false); }} variant="secondary">Logout</Button>
+                ) : (
+                  <Button asChild onClick={() => setIsOpen(false)}>
+                    <Link href="/login">Login</Link>
+                  </Button>
+                )}
+            </div>
+          </nav>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-[#00A7A9] text-primary-foreground backdrop-blur-sm">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2" aria-label="SLK Hana Ola Home">
           <Logo />
         </Link>
-        <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
-                pathname === link.href && "underline underline-offset-4"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-          {user && (
-            <Link
-              href={user.role === 'admin' ? "/admin" : "/dashboard"}
-              className={cn(
-                "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
-                (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
-              )}
-            >
-              Dashboard
-            </Link>
-          )}
-           {user ? (
+        
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-4 md:flex">
+          {user ? (
+            <>
+              <Link
+                href={user.role === 'admin' ? "/admin" : "/dashboard"}
+                className={cn(
+                  "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
+                  (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
+                )}
+              >
+                Dashboard
+              </Link>
               <Button onClick={logout} variant="secondary">Logout</Button>
-            ) : (
+              <MobileNavMenu />
+            </>
+          ) : (
+            <>
+              <nav className="flex items-center gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "font-headline text-lg font-medium text-primary-foreground/80 transition-colors hover:text-primary-foreground",
+                      pathname === link.href && "underline underline-offset-4"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
               <Button asChild>
                 <Link href="/login">Login</Link>
               </Button>
-            )}
-        </nav>
+            </>
+          )}
+        </div>
+
+        {/* Mobile Navigation Trigger */}
         <div className="md:hidden">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Open navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background text-foreground">
-              <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b p-4">
-                  <Logo isDark/>
-                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                    <X className="h-6 w-6" />
-                    <span className="sr-only">Close navigation menu</span>
-                  </Button>
-                </div>
-                <nav className="flex flex-col items-start gap-4 p-4">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className={cn(
-                        "font-headline text-xl font-medium",
-                        pathname === link.href && "underline underline-offset-4"
-                      )}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  {user && (
-                     <Link
-                       href={user.role === 'admin' ? "/admin" : "/dashboard"}
-                       className={cn(
-                         "font-headline text-xl font-medium",
-                         (pathname === "/dashboard" || pathname === "/admin") && "underline underline-offset-4"
-                       )}
-                       onClick={() => setIsOpen(false)}
-                     >
-                       Dashboard
-                     </Link>
-                  )}
-                  <div className="pt-4">
-                     {user ? (
-                        <Button onClick={() => { logout(); setIsOpen(false); }} variant="secondary">Logout</Button>
-                      ) : (
-                        <Button asChild onClick={() => setIsOpen(false)}>
-                          <Link href="/login">Login</Link>
-                        </Button>
-                      )}
-                  </div>
-                </nav>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <MobileNavMenu />
         </div>
       </div>
     </header>
   );
 }
-
-    
