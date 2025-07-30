@@ -11,9 +11,9 @@ export function Logo({ isDark = false }: LogoProps) {
        <Image 
             src="/images/SLKlogo.png"
             alt="SLK Hana Ola Logo"
-            width={40}
-            height={40}
-            className="h-10 w-auto"
+            width={50}
+            height={50}
+            className="h-12 w-auto"
             unoptimized
         />
       <h1 className={cn("font-headline text-xl font-bold tracking-tight", isDark ? 'text-foreground' : 'text-primary-foreground')}>
