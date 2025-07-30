@@ -9,7 +9,7 @@ export function HeroSection() {
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-6">
             <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-              Compassionate Care for a Healthier Life
+              PROVIDING THE HIGHEST QUALITY HEALTHCARE AT HOME
             </h1>
             <p className="max-w-2xl text-lg text-foreground/80 md:text-xl">
               SLK Hana Ola provides exceptional healthcare services with a personal touch. We are dedicated to the well-being of our community, one patient at a time.
