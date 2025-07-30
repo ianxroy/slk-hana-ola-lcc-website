@@ -18,7 +18,7 @@ export default function Home() {
         <GsapScrollAnimator>
           <HeroSection />
           <AboutSection isPreview />
-          <ServicesSection isPreview />
+          <ServicesSection />
           <TestimonialsSection isPreview />
           <EmploymentSection isPreview />
           <ContactSection isPreview />
