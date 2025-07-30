@@ -27,7 +27,7 @@ export function AboutSection({ isPreview = false }: AboutSectionProps) {
                                     We envision the company to diversify in the future and provide skilled nursing services and therapeutic services such as physical therapy and occupational therapy.
                             </p>
                             <p className="animate-fade-in-up">
-                                    When you need professional assistance and extra support for your loved one, let SLK Hana Ola help you.
+                                    When you need professional assistance and extra support for your loved one, let SLK Hana Ola, LLC help you.
                             </p>
                             <p className="animate-fade-in-up">
                                     For more inquiries, please contact us at <a href="tel:808-772-4756" className="text-primary hover:underline">808-772-4756</a>.
