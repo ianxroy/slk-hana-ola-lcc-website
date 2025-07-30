@@ -52,13 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 photoURL: firebaseUser.photoURL
             });
           } else {
-            // User is pending or rejected, sign them out client-side
+            // User is pending or rejected, sign them out client-side if they manage to get here
             await auth.signOut();
             setUserProfile(null);
           }
         } else {
-            // This case might happen during registration race condition
-            // Login logic now handles creating the doc if it doesn't exist
+            // User doc doesn't exist, which can happen right after registration
+            // The login page handles this, but as a safeguard, we sign out.
+            await auth.signOut();
             setUserProfile(null);
         }
         setProfileLoading(false);

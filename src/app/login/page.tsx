@@ -50,7 +50,6 @@ const registerSchema = z.object({
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -68,75 +67,50 @@ export default function LoginPage() {
   const handleLogin = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     setError(null);
-    setSuccessMessage(null);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
       const userDocRef = doc(db, 'users', user.uid);
-      let userDoc = await getDoc(userDocRef);
+      const userDoc = await getDoc(userDocRef);
 
-      // If user document doesn't exist, create it. This is the first login.
-      if (!userDoc.exists()) {
-        const usersCollectionRef = collection(db, 'users');
-        const q = query(usersCollectionRef, limit(1));
-        const querySnapshot = await getDocs(q);
-        const isFirstUser = querySnapshot.empty;
-
-        const role = isFirstUser ? 'admin' : 'employee';
-        const status = isFirstUser ? 'approved' : 'pending';
-
-        // We can't get full name or phone here, so we'll have to add it later
-        // or ask the user to complete their profile. For now, we'll use email.
-        await setDoc(doc(db, 'users', user.uid), {
-            uid: user.uid,
-            email: user.email,
-            fullName: "New User", // Placeholder
-            phone: "N/A", // Placeholder
-            role: role,
-            status: status,
-            createdAt: new Date(),
-        });
-        
-        // Re-fetch the document after creating it
-        userDoc = await getDoc(userDocRef);
-
-        if (status === 'pending') {
-             await auth.signOut();
-             throw new Error('Your account has been created and is pending approval. Please contact an administrator.');
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.status === 'pending') {
+          await auth.signOut();
+          throw new Error('Your account is pending approval. Please contact an administrator.');
         }
-      }
-
-      const userData = userDoc.data();
-      if (!userData) {
-          throw new Error("User data not found after check.");
-      }
-
-      if (userData.status === 'pending') {
-        await auth.signOut();
-        throw new Error('Your account is pending approval. Please contact an administrator.');
-      }
-      if (userData.status === 'rejected') {
-        await auth.signOut();
-        throw new Error('Your account registration has been rejected. Please contact an administrator.');
-      }
-      if (userData.status === 'approved') {
-        toast({
-          title: 'Login Successful',
-          description: "Welcome back!",
-        });
-        
-        if (userData.role === 'admin') {
-          router.push('/admin');
+        if (userData.status === 'rejected') {
+          await auth.signOut();
+          throw new Error('Your account registration has been rejected. Please contact an administrator for assistance.');
+        }
+        if (userData.status === 'approved') {
+          toast({
+            title: 'Login Successful',
+            description: "Welcome back!",
+          });
+          
+          if (userData.role === 'admin') {
+            router.push('/admin');
+          } else {
+            router.push('/dashboard');
+          }
         } else {
-          router.push('/dashboard');
+            throw new Error('Invalid account status. Please contact support.');
         }
       } else {
-          throw new Error('Invalid account status.');
+        // This case handles users who registered but whose document creation might have failed or is delayed.
+        // It's safer to deny login and ask them to contact support or try registering again.
+        await auth.signOut();
+        throw new Error("Your user profile was not found. Please try registering again or contact support.");
       }
 
     } catch (error: any) {
-      setError(error.message);
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            setError('Invalid email or password.');
+        } else {
+            setError(error.message);
+        }
     } finally {
       setIsLoading(false);
     }
@@ -145,42 +119,52 @@ export default function LoginPage() {
   const handleRegister = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     setError(null);
-    setSuccessMessage(null);
 
     try {
-      // 1. Create user in Firebase Auth. We no longer create the Firestore doc here.
+      // Check if there are any users already
+      const usersCollectionRef = collection(db, 'users');
+      const q = query(usersCollectionRef, limit(1));
+      const querySnapshot = await getDocs(q);
+      const isFirstUser = querySnapshot.empty;
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
-      
-      // Store user details temporarily to be picked up on first login
-      // NOTE: For a real app, this is not robust. A server-side process is better.
-      // But for this project, we'll store it in a way the login can create the user doc.
-      // A simple way is to create a temporary doc that the user can read and then delete.
-      // For this implementation, we will rely on the login to create a basic profile.
-      // We will also store the full details in a separate 'registrations' collection
-      // that an admin can reference. This is more secure.
+      const user = userCredential.user;
 
-      await setDoc(doc(db, "registrations", userCredential.user.uid), {
-          email: data.email,
-          fullName: data.fullName,
-          phone: data.phone,
-          registeredAt: new Date(),
+      const role = isFirstUser ? 'admin' : 'employee';
+      const status = isFirstUser ? 'approved' : 'pending';
+      
+      // Create a user document in Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: data.email,
+        fullName: data.fullName,
+        phone: data.phone,
+        role: role,
+        status: status,
+        createdAt: new Date(),
       });
 
-      // 2. Sign the user out immediately.
+      // Sign the user out immediately after creating their profile
       await auth.signOut();
-
-      // 3. Show success message and prompt user to login.
-      setSuccessMessage("Registration successful! Please log in to continue.");
-      registerForm.reset();
-      setActiveTab('login'); // Switch to the login tab
+      
+      if (status === 'approved') {
+          toast({
+            title: 'Admin Registration Successful!',
+            description: 'You are the first user, so you have been made an admin. You can now log in.',
+          });
+          setActiveTab('login');
+      } else {
+          // Redirect to the pending page
+          router.push('/registration-pending');
+      }
 
     } catch (error: any) {
         if (error.code === 'auth/email-already-in-use') {
-            setError('This email address is already in use.');
+            setError('This email address is already in use. Please try logging in.');
         } else {
             setError(error.message);
         }
@@ -211,15 +195,8 @@ export default function LoginPage() {
                    {error && activeTab === 'login' && (
                      <Alert variant="destructive">
                        <AlertCircle className="h-4 w-4" />
-                       <AlertTitle>Error</AlertTitle>
+                       <AlertTitle>Login Failed</AlertTitle>
                        <AlertDescription>{error}</AlertDescription>
-                     </Alert>
-                   )}
-                    {successMessage && activeTab === 'login' && (
-                     <Alert variant="default" className="bg-green-100 border-green-400 text-green-700">
-                       <AlertCircle className="h-4 w-4" />
-                       <AlertTitle>Success</AlertTitle>
-                       <AlertDescription>{successMessage}</AlertDescription>
                      </Alert>
                    )}
                   <div className="space-y-2">
@@ -253,7 +230,7 @@ export default function LoginPage() {
                   {error && activeTab === 'register' && (
                      <Alert variant="destructive">
                        <AlertCircle className="h-4 w-4" />
-                       <AlertTitle>Error</AlertTitle>
+                       <AlertTitle>Registration Failed</AlertTitle>
                        <AlertDescription>{error}</AlertDescription>
                      </Alert>
                    )}
@@ -290,5 +267,4 @@ export default function LoginPage() {
       <Footer />
     </div>
   );
-
-    
+}
