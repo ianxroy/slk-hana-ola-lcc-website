@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -114,15 +114,21 @@ export default function LoginPage() {
     setError(null);
     setSuccessMessage(null);
     try {
+      // Check if any user exists to determine if this is the first registration
+      const usersCollectionRef = collection(db, 'users');
+      const q = query(usersCollectionRef, limit(1));
+      const querySnapshot = await getDocs(q);
+      const isFirstUser = querySnapshot.empty;
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
       const user = userCredential.user;
-
-      // Temporary logic for first admin registration
-      const isAdminRegistration = data.email.toLowerCase() === 'admin@slkhanaola.com';
+      
+      const role = isFirstUser ? 'admin' : 'employee';
+      const status = isFirstUser ? 'approved' : 'pending';
 
       // Create a user document in Firestore
       await setDoc(doc(db, 'users', user.uid), {
@@ -130,13 +136,13 @@ export default function LoginPage() {
         email: user.email,
         fullName: data.fullName,
         phone: data.phone,
-        role: isAdminRegistration ? 'admin' : 'employee',
-        status: isAdminRegistration ? 'approved' : 'pending',
+        role: role,
+        status: status,
         createdAt: new Date(),
       });
       
-      if (isAdminRegistration) {
-        setSuccessMessage('Admin registration successful! You can now log in.');
+      if (isFirstUser) {
+        setSuccessMessage('Admin registration successful! You are the first user, so you have been made an admin. You can now log in.');
       } else {
         setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
       }
