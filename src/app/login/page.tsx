@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, collection, addDoc, query, where, getDocs, limit, setDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
@@ -114,49 +114,23 @@ export default function LoginPage() {
   const handleRegister = async (data: z.infer<typeof registerSchema>) => {
     setIsSubmitting(true);
     setError(null);
-
     try {
-        const usersQuery = query(collection(db, "users"), where("email", "==", data.email), limit(1));
-        const registrationRequestsQuery = query(collection(db, "registrationRequests"), where("email", "==", data.email), limit(1));
-
-        const [userSnapshot, registrationRequestSnapshot] = await Promise.all([
-            getDocs(usersQuery),
-            getDocs(registrationRequestsQuery)
-        ]);
-
-        if (!userSnapshot.empty) {
-            throw new Error("This email address is already associated with an approved account.");
-        }
-
-        if (!registrationRequestSnapshot.empty) {
-            throw new Error("A registration request for this email address is already pending approval.");
-        }
-
-        // Create user in Firebase Auth first
-        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        const newUser = userCredential.user;
-
-        // Now, create the registration request document WITH the UID
-        await setDoc(doc(db, 'registrationRequests', newUser.uid), {
-            uid: newUser.uid, // Store the auth UID
-            email: data.email,
-            fullName: data.fullName,
-            phone: data.phone,
-            status: 'pending',
-            createdAt: new Date(),
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
         });
-        
-        // Sign the user out immediately after registration
-        await auth.signOut();
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'An unexpected error occurred.');
+        }
         
         router.push('/registration-pending');
 
     } catch (error: any) {
-        if (error.code === 'auth/email-already-in-use') {
-            setError("This email address is already in use by another account.");
-        } else {
-            setError(error.message || "An unexpected error occurred during registration.");
-        }
+        setError(error.message || "An unexpected error occurred during registration.");
     } finally {
         setIsSubmitting(false);
     }
