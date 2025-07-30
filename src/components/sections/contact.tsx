@@ -31,6 +31,7 @@ const formSchema = z.object({
 
 export function ContactSection() {
     const [isClient, setIsClient] = React.useState(false);
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
     React.useEffect(() => {
         setIsClient(true);
@@ -57,8 +58,6 @@ export function ContactSection() {
     form.reset();
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
   return (
     <section
       id="contact"
@@ -68,10 +67,10 @@ export function ContactSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="space-y-4">
             <div className="text-center lg:text-left">
-              <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+              <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl scroll-animate">
                 Contact Us
               </h2>
-              <p className="mt-4 text-foreground/80">
+              <p className="mt-4 text-foreground/80 scroll-animate">
                 To better serve you, please provide SLK Hana Ola, LLC with the
                 following information and we'll get back to you promptly.
               </p>

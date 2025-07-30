@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -7,13 +8,15 @@ export function EmploymentSection() {
             <div className="container mx-auto px-4 md:px-6 scroll-animate">
                 <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
                     <div className="order-2 lg:order-1 space-y-6">
-                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl scroll-animate">
                             Join Our Team
                         </h2>
-                        <p className="max-w-2xl text-lg text-foreground/80 md:text-xl">
+                        <p className="max-w-2xl text-lg text-foreground/80 md:text-xl scroll-animate">
                             We are always looking for passionate and dedicated individuals to join the SLK Hana Ola family. If you share our commitment to compassionate care, we would love to hear from you.
                         </p>
-                        <Button size="lg" className="hover:bg-yellow-orange">View Open Positions</Button>
+                        <div className="scroll-animate">
+                           <Button size="lg" className="hover:bg-yellow-orange">View Open Positions</Button>
+                        </div>
                     </div>
                     <div className="order-1 lg:order-2 overflow-hidden rounded-xl shadow-2xl">
                         <Image

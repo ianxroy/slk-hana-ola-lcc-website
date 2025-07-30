@@ -32,8 +32,8 @@ export function TestimonialsSection() {
     <section id="testimonials" className="min-h-screen snap-start w-full bg-secondary/10 flex items-center justify-center py-12 md:py-24">
       <div className="container mx-auto px-4 md:px-6 scroll-animate">
         <div className="mx-auto max-w-3xl text-center space-y-4">
-          <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">What Our Clients Say</h2>
-          <p className="text-lg text-foreground/80">
+          <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl scroll-animate">What Our Clients Say</h2>
+          <p className="text-lg text-foreground/80 scroll-animate">
             Real stories from families we've had the privilege to serve.
           </p>
         </div>
@@ -46,7 +46,7 @@ export function TestimonialsSection() {
                   <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-lg font-bold">{testimonial.name}</CardTitle>
+                  <CardTitle className="text-lg font-bold scroll-animate">{testimonial.name}</CardTitle>
                    <div className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
@@ -58,7 +58,7 @@ export function TestimonialsSection() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-base italic">"{testimonial.quote}"</p>
+                <p className="text-base italic scroll-animate">"{testimonial.quote}"</p>
               </CardContent>
             </Card>
           ))}
