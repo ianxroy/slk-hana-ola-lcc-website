@@ -101,15 +101,18 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
 
         // Twinkle animation
         stars.forEach(star => {
-          gsap.to(star, {
-            opacity: 0.5,
-            scale: 0.9,
-            repeat: -1,
-            yoyo: true,
-            duration: Math.random() * 1.5 + 0.5,
-            ease: "power1.inOut",
-            delay: Math.random() * 2
-          });
+          gsap.fromTo(star, 
+            { scale: 1, opacity: 1 },
+            {
+              scale: 1.1,
+              opacity: 0.7,
+              repeat: -1,
+              yoyo: true,
+              duration: Math.random() * 1.5 + 0.5,
+              ease: "power1.inOut",
+              delay: Math.random() * 2
+            }
+          );
         });
       });
 
