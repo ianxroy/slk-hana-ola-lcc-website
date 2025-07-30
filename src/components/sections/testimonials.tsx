@@ -82,7 +82,7 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                     <Card 
                         key={testimonial.id} 
                         className={cn(
-                            "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up w-full md:w-auto md:max-w-sm",
+                            "flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl animate-fade-in-up w-full md:w-96",
                             testimonial.rating === 5 && "five-star-glow"
                         )}
                     >
