@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -99,7 +99,10 @@ export default function LoginPage() {
             throw new Error('Invalid account status.');
         }
       } else {
-        throw new Error("User data not found.");
+        // This can happen if the user was created in Auth but the Firestore doc creation failed.
+        // We can try to create it now.
+         await auth.signOut();
+         throw new Error("Your user profile is incomplete. Please try registering again. If the problem persists, contact support.");
       }
 
     } catch (error: any) {
@@ -113,50 +116,42 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
+    let userCredential;
+
     try {
       // 1. Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
+      userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
       const user = userCredential.user;
-      
-      // 2. Get the user's auth token
-      const token = await user.getIdToken();
 
-      // 3. Call the secure API route to create the Firestore document
-      const response = await fetch('/api/create-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          uid: user.uid,
-          email: data.email,
-          fullName: data.fullName,
-          phone: data.phone,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        // If the API call fails, we should ideally delete the auth user to avoid orphaned accounts.
-        // This is an advanced topic, but for now, we'll just show the error.
-        await user.delete();
-        throw new Error(result.message || 'Failed to create user document.');
-      }
-
-      const message = result.status === 'approved'
-        ? 'Admin registration successful! You are the first user, so you have been made an admin. You can now log in.'
+      // This is the temporary logic for the first admin user
+      const isAdminRegistration = data.email.toLowerCase() === 'admin@slkhanaola.com';
+      const role = isAdminRegistration ? 'admin' : 'employee';
+      const status = isAdminRegistration ? 'approved' : 'pending';
+      const message = isAdminRegistration
+        ? 'Admin registration successful! You can now log in with full administrative privileges.'
         : 'Registration successful! Please wait for an administrator to approve your account.';
+
+      // 2. Create the user document in Firestore.
+      // This call is now made by an authenticated user, so it will pass security rules.
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: data.email,
+        fullName: data.fullName,
+        phone: data.phone,
+        role: role,
+        status: status,
+        createdAt: new Date(),
+      });
       
       setSuccessMessage(message);
       registerForm.reset();
 
-      // Sign the user out since their account is likely pending
+      // 3. Sign the user out. If they are not an admin, their account is pending.
+      // If they are an admin, they can now log in normally.
       await auth.signOut();
 
     } catch (error: any) {
@@ -164,6 +159,12 @@ export default function LoginPage() {
             setError('This email address is already in use.');
         } else {
             setError(error.message);
+        }
+        // If user was created in Auth but Firestore write failed, clean up the auth user.
+        if (userCredential) {
+            await userCredential.user.delete().catch(() => {
+                console.warn("Failed to clean up orphaned auth user. Please do this manually in the Firebase console.")
+            });
         }
     } finally {
         setIsLoading(false);
@@ -267,3 +268,10 @@ export default function LoginPage() {
             </Card>
           </TabsContent>
         </Tabs>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+    
