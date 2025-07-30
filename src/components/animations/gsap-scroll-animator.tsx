@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from 'react';
@@ -15,7 +16,8 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const animatedElements = gsap.utils.toArray<HTMLElement>('.scroll-animate');
+      // Animate single elements
+      const animatedElements = gsap.utils.toArray<HTMLElement>('.scroll-animate:not(.stagger-card)');
       animatedElements.forEach((el) => {
         gsap.fromTo(
           el,
@@ -28,11 +30,34 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
             scrollTrigger: {
               trigger: el,
               start: 'top 85%',
-              toggleActions: 'restart none none reset',
+              toggleActions: 'restart none restart reset',
             },
           }
         );
       });
+
+      // Animate card containers with stagger
+      const staggerContainers = gsap.utils.toArray<HTMLElement>('.stagger-container');
+      staggerContainers.forEach((container) => {
+         const cards = gsap.utils.toArray<HTMLElement>('.stagger-card', container);
+         gsap.fromTo(
+            cards,
+            { autoAlpha: 0, y: 50 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+              stagger: 0.2,
+              scrollTrigger: {
+                trigger: container,
+                start: 'top 85%',
+                toggleActions: 'restart none restart reset',
+              },
+            }
+         )
+      })
+
     }, containerRef);
 
     return () => ctx.revert();

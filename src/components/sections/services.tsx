@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -14,8 +15,8 @@ export function ServicesSection() {
                         SLK Hana Ola, LLC offers the following services regardless of race, age, color, creed, sex, national origin, ancestry, religion, disability, marital status or sexual orientation.
                     </p>
                 </div>
-                <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-                    <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 stagger-container">
+                    <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                         <CardHeader>
                              <div className="overflow-hidden rounded-t-lg">
                                 <Image 
@@ -33,7 +34,7 @@ export function ServicesSection() {
                             <p className="text-base">Personal care services shall include activities based on the assessment of the clients’ needs, including but not limited to: personal hygiene and grooming; bathing; skin care; oral hygiene; hair care; dressing; assistance with ambulation, mobility, transfers, and positioning; and assistance with exercise and range of motion.</p>
                         </CardContent>
                     </Card>
-                     <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                     <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                         <CardHeader>
                              <div className="overflow-hidden rounded-t-lg">
                                 <Image 
@@ -51,7 +52,7 @@ export function ServicesSection() {
                             <p className="text-base">Homemaker services shall be provided by personal care aides or homemakers and shall include activities based on the assessment of the clients’ needs, including but not limited to: routine and light house cleaning; care of clothing and linens; shopping for household supplies; clothing and personal essentials; running errands or picking up medication; shopping for food or preparing meals; escorting the client to medical care services or to nutritional or recreational programs; and assisting with simple health care routines such as reminders to take oral medication; to maintain diet restrictions or to perform recommended exercises.</p>
                         </CardContent>
                     </Card>
-                    <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                    <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                         <CardHeader>
                              <div className="overflow-hidden rounded-t-lg">
                                 <Image 
@@ -69,7 +70,7 @@ export function ServicesSection() {
                             <p className="text-base">We provide support with daily activities to help our clients maintain their independence and quality of life at home.</p>
                         </CardContent>
                     </Card>
-                     <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                     <Card className="flex flex-col group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
                         <CardHeader>
                             <div className="overflow-hidden rounded-t-lg">
                                 <Image 

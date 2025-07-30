@@ -37,9 +37,9 @@ export function TestimonialsSection() {
             Real stories from families we've had the privilege to serve.
           </p>
         </div>
-        <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3">
+        <div className="mt-12 grid gap-8 md:grid-cols-1 lg:grid-cols-3 stagger-container">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.name} className="flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+            <Card key={testimonial.name} className="flex flex-col justify-between overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl stagger-card">
               <CardHeader className="flex-row items-center gap-4 pb-4">
                 <Avatar>
                   <AvatarImage src={`https://placehold.co/40x40.png?text=${testimonial.avatar}`} data-ai-hint={testimonial.imageHint} />
