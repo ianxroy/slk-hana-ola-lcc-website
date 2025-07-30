@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, collection, addDoc, query, where, getDocs, limit } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc, collection, addDoc, query, where, getDocs, limit, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
@@ -132,21 +132,31 @@ export default function LoginPage() {
             throw new Error("A registration request for this email address is already pending approval.");
         }
 
-      const requestsCollectionRef = collection(db, 'registrationRequests');
-      // DO NOT store the password in the registration request for security reasons.
-      // The admin will generate a temporary password upon approval.
-      await addDoc(requestsCollectionRef, {
-        email: data.email,
-        fullName: data.fullName,
-        phone: data.phone,
-        status: 'pending',
-        createdAt: new Date(),
-      });
-      
-      router.push('/registration-pending');
+        // Create user in Firebase Auth first
+        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+        const newUser = userCredential.user;
+
+        // Now, create the registration request document WITH the UID
+        await setDoc(doc(db, 'registrationRequests', newUser.uid), {
+            uid: newUser.uid, // Store the auth UID
+            email: data.email,
+            fullName: data.fullName,
+            phone: data.phone,
+            status: 'pending',
+            createdAt: new Date(),
+        });
+        
+        // Sign the user out immediately after registration
+        await auth.signOut();
+        
+        router.push('/registration-pending');
 
     } catch (error: any) {
-        setError(error.message || "An unexpected error occurred during registration.");
+        if (error.code === 'auth/email-already-in-use') {
+            setError("This email address is already in use by another account.");
+        } else {
+            setError(error.message || "An unexpected error occurred during registration.");
+        }
     } finally {
         setIsSubmitting(false);
     }

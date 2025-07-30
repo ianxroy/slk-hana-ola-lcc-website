@@ -2,57 +2,29 @@
 'use client';
 
 import * as React from 'react';
-import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 interface RegistrationRequest {
-  id: string;
+  id: string; // This is the doc ID from registrationRequests
+  uid: string; // This is the Firebase Auth UID
   email: string;
   fullName: string;
   phone: string;
   role: 'admin' | 'employee';
-  status: 'pending' | 'rejected';
+  status: 'pending' | 'rejected' | 'approved';
   createdAt: {
     seconds: number;
     nanoseconds: number;
   };
 }
-
-const TempPasswordDisplay = ({ password }: { password: string }) => {
-  const { toast } = useToast();
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(password);
-    toast({ title: 'Copied!', description: 'Temporary password copied to clipboard.' });
-  };
-
-  return (
-    <div className="mt-4">
-        <Alert>
-            <AlertTitle>User Approved!</AlertTitle>
-            <AlertDescription>
-                <div className="space-y-2">
-                    <p>Please provide the user with their temporary password:</p>
-                    <div className="flex items-center gap-2">
-                        <code className="font-mono p-2 bg-muted rounded-md text-sm">{password}</code>
-                        <Button variant="ghost" size="icon" onClick={copyToClipboard}>
-                           <Copy className="h-4 w-4" />
-                        </Button>
-                    </div>
-                     <p className="text-xs text-muted-foreground">They will be prompted to change it upon first login.</p>
-                </div>
-            </AlertDescription>
-        </Alert>
-    </div>
-  );
-};
-
 
 export function UserManagement() {
   const { toast } = useToast();
@@ -116,33 +88,36 @@ export function UserManagement() {
 
   const handleApprove = async (request: RegistrationRequest) => {
     setIsProcessing(request.id);
-    // Generate a secure, random temporary password
-    const tempPassword = Math.random().toString(36).slice(-8);
+    if (!request.uid) {
+        toast({
+            variant: 'destructive',
+            title: 'Approval Failed',
+            description: 'The user ID is missing from the request. The user may not have completed authentication setup.',
+        });
+        setIsProcessing(null);
+        return;
+    }
 
     try {
-        const response = await fetch('/api/approve-user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                docId: request.id,
-                email: request.email,
-                password: tempPassword,
-                fullName: request.fullName,
-                phone: request.phone,
-                role: request.role,
-            })
+        // Step 1: Create the user document in the 'users' collection in Firestore
+        await setDoc(doc(db, 'users', request.uid), {
+          uid: request.uid,
+          email: request.email,
+          fullName: request.fullName,
+          phone: request.phone,
+          role: request.role,
+          status: 'approved',
+          createdAt: new Date(),
         });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || 'Failed to approve user.');
-        }
+        // Step 2: Update the original request to 'approved' status
+        await updateDoc(doc(db, 'registrationRequests', request.id), {
+            status: 'approved'
+        });
 
         toast({
-            title: 'Success!',
-            description: <TempPasswordDisplay password={tempPassword} />,
-            duration: 30000, // Give admin time to copy the password
+            title: 'User Approved!',
+            description: `${request.fullName} has been successfully approved and their profile created.`,
         });
         fetchRequests(); // Refresh the list
 
@@ -151,7 +126,7 @@ export function UserManagement() {
         toast({
             variant: 'destructive',
             title: 'Approval Failed',
-            description: error.message || 'An unexpected error occurred.',
+            description: error.message || 'An unexpected error occurred while creating the user profile.',
         });
     } finally {
         setIsProcessing(null);
@@ -189,7 +164,7 @@ export function UserManagement() {
                 {new Date(request.createdAt.seconds * 1000).toLocaleDateString()}
               </TableCell>
               <TableCell>
-                <Badge variant={request.status === 'pending' ? 'secondary' : 'destructive'}>
+                <Badge variant={request.status === 'pending' ? 'secondary' : request.status === 'approved' ? 'default' : 'destructive'}>
                   {request.status}
                 </Badge>
               </TableCell>
@@ -197,7 +172,7 @@ export function UserManagement() {
                  <Select
                   value={request.role}
                   onValueChange={(value) => handleRoleChange(request.id, value as 'admin' | 'employee')}
-                  disabled={isProcessing === request.id}
+                  disabled={isProcessing === request.id || request.status !== 'pending'}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Select role" />
