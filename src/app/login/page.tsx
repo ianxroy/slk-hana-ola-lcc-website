@@ -33,6 +33,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { createUserDocument } from '@/ai/flows/createUser-flow';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -114,50 +115,48 @@ export default function LoginPage() {
     setError(null);
     setSuccessMessage(null);
     try {
-      // Check if any user exists to determine if this is the first registration
-      const usersCollectionRef = collection(db, 'users');
-      const q = query(usersCollectionRef, limit(1));
-      const querySnapshot = await getDocs(q);
-      const isFirstUser = querySnapshot.empty;
+        // Step 1: Create the user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            data.email,
+            data.password
+        );
+        const user = userCredential.user;
 
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
-      
-      const role = isFirstUser ? 'admin' : 'employee';
-      const status = isFirstUser ? 'approved' : 'pending';
+        // Step 2: Call the Genkit flow to create the Firestore document
+        const flowResult = await createUserDocument({
+            uid: user.uid,
+            email: data.email,
+            fullName: data.fullName,
+            phone: data.phone,
+        });
 
-      // Create a user document in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        fullName: data.fullName,
-        phone: data.phone,
-        role: role,
-        status: status,
-        createdAt: new Date(),
-      });
-      
-      if (isFirstUser) {
-        setSuccessMessage('Admin registration successful! You are the first user, so you have been made an admin. You can now log in.');
-      } else {
-        setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
-      }
-      registerForm.reset();
+        if (!flowResult.success) {
+            // If the flow fails, we should ideally delete the auth user to avoid orphaned accounts.
+            // However, that requires admin privileges and is best done in a more complex setup.
+            // For now, we'll show an error.
+            throw new Error(flowResult.message || "Failed to create user document after registration.");
+        }
+
+        // Determine the success message based on the flow's response
+        if (flowResult.message.includes('role: admin')) {
+            setSuccessMessage('Admin registration successful! You are the first user, so you have been made an admin. You can now log in.');
+        } else {
+            setSuccessMessage('Registration successful! Please wait for an administrator to approve your account.');
+        }
+
+        registerForm.reset();
 
     } catch (error: any) {
-       if (error.code === 'auth/email-already-in-use') {
-         setError('This email address is already in use.');
-       } else {
-         setError(error.message);
-       }
+        if (error.code === 'auth/email-already-in-use') {
+            setError('This email address is already in use.');
+        } else {
+            setError(error.message);
+        }
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
