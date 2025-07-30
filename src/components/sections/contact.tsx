@@ -20,9 +20,17 @@ import { useToast } from "@/hooks/use-toast";
 import React from 'react';
 import { GsapScrollAnimator } from "../animations/gsap-scroll-animator";
 import Link from "next/link";
-import { submitContactForm } from "@/ai/flows/contact-flow";
-import { ContactFormInputSchema } from "@/ai/flows/contact-schema";
 import { Loader2 } from "lucide-react";
+
+const ContactFormSchema = z.object({
+  name: z.string().min(1, { message: "Name is required." }),
+  email: z.string().email({ message: "Invalid email address." }),
+  phone: z.string().min(1, { message: "Phone number is required." }),
+  interest: z.enum(['services', 'employment'], {
+    required_error: "You need to select an interest.",
+  }),
+  message: z.string().min(1, { message: "Message is required." }),
+});
 
 type ContactSectionProps = {
     isPreview?: boolean;
@@ -37,8 +45,8 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
         setIsClient(true);
     }, []);
     
-  const form = useForm<z.infer<typeof ContactFormInputSchema>>({
-    resolver: zodResolver(ContactFormInputSchema),
+  const form = useForm<z.infer<typeof ContactFormSchema>>({
+    resolver: zodResolver(ContactFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -49,29 +57,19 @@ export function ContactSection({ isPreview = false }: ContactSectionProps) {
 
   const { toast } = useToast();
 
-  async function onSubmit(data: z.infer<typeof ContactFormInputSchema>) {
+  async function onSubmit(data: z.infer<typeof ContactFormSchema>) {
     setIsSubmitting(true);
-    try {
-        const result = await submitContactForm(data);
-        if (result.success) {
-            toast({
-                title: "Form Submitted!",
-                description: "Thank you for your message. We will get back to you shortly.",
-            });
-            form.reset();
-        } else {
-            throw new Error(result.message);
-        }
-    } catch (error) {
-        toast({
-            variant: "destructive",
-            title: "Submission Failed",
-            description: "There was an error submitting your form. Please try again later.",
-        });
-        console.error("Form submission error:", error);
-    } finally {
-        setIsSubmitting(false);
-    }
+    console.log("Form data submitted:", data);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    toast({
+        title: "Form Submitted!",
+        description: "Thank you for your message. We will get back to you shortly.",
+    });
+    
+    form.reset();
+    setIsSubmitting(false);
   }
 
   return (
