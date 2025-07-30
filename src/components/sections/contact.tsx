@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import React from 'react';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -29,6 +30,12 @@ const formSchema = z.object({
 });
 
 export function ContactSection() {
+    const [isClient, setIsClient] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsClient(true);
+    }, []);
+    
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,6 +45,8 @@ export function ContactSection() {
       message: "",
     },
   });
+
+  const { toast } = useToast();
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     toast({
@@ -85,6 +94,7 @@ export function ContactSection() {
             </div>
           </div>
           <div className="mx-auto w-full max-w-md">
+            {isClient && (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -182,6 +192,7 @@ export function ContactSection() {
                 </Button>
               </form>
             </Form>
+            )}
           </div>
         </div>
       </div>
