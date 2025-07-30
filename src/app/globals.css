@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 355 78% 62%; /* Red-Pink for CTA */
+    --primary: 181 100% 33%; /* #00a7a9 */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 274 50% 64%; /* Purple for sections */
@@ -30,7 +30,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 355 78% 62%;
+    --ring: 181 100% 33%;
 
     --radius: 0.5rem;
   }
@@ -42,7 +42,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 355 78% 62%;
+    --primary: 181 100% 33%;
     --primary-foreground: 0 0% 98%;
     --secondary: 274 50% 64%;
     --secondary-foreground: 0 0% 98%;
@@ -54,7 +54,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 355 78% 62%;
+    --ring: 181 100% 33%;
   }
 }
 

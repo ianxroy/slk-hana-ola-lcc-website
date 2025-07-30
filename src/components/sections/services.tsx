@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function ServicesSection() {
     return (
-        <section id="services" className="scroll-animate w-full py-16 md:py-24">
+        <section id="services" className="scroll-animate h-screen snap-start w-full flex items-center justify-center">
              <div className="container mx-auto px-4 md:px-6">
                 <div className="mx-auto max-w-3xl text-center space-y-4 mb-12">
                     <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Services</h2>

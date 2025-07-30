@@ -11,18 +11,16 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 h-screen snap-y snap-mandatory overflow-y-scroll">
         <GsapScrollAnimator>
           <HeroSection />
-          <div className="w-full bg-gradient-to-b from-background via-light-green/10 to-background">
-            <AboutSection />
-            <ServicesSection />
-          </div>
+          <AboutSection />
+          <ServicesSection />
           <EmploymentSection />
           <ContactSection />
+          <Footer />
         </GsapScrollAnimator>
       </main>
-      <Footer />
     </div>
   );
 }
