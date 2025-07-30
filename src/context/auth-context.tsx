@@ -12,6 +12,7 @@ interface UserProfile {
   email: string | null;
   role: 'admin' | 'employee';
   status: 'pending' | 'approved' | 'rejected';
+  photoURL?: string | null;
 }
 
 interface AuthContextType {
@@ -40,7 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     uid: firebaseUser.uid,
                     email: firebaseUser.email,
                     role: userData.role || 'employee',
-                    status: userData.status
+                    status: userData.status,
+                    photoURL: firebaseUser.photoURL
                 });
             } else {
                 // User is pending or rejected, sign them out client-side
