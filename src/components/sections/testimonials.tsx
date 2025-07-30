@@ -97,7 +97,10 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
                             {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                                 key={i}
-                                className={`star h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
+                                className={cn(
+                                    "star h-5 w-5", 
+                                    i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'
+                                )}
                             />
                             ))}
                         </div>
