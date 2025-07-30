@@ -13,7 +13,7 @@ const navLinks = [
 
 export function Footer() {
   return (
-    <footer id="footer" className="bg-accent text-accent-foreground py-12 md:py-16">
+    <footer id="footer" className="bg-foreground text-background py-12 md:py-16">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid gap-12 md:grid-cols-3">
           {/* About Us Section */}
@@ -70,7 +70,7 @@ export function Footer() {
            </div>
         </div>
 
-        <div className="mt-12 border-t border-accent-foreground/20 pt-8 text-center text-base">
+        <div className="mt-12 border-t border-background/20 pt-8 text-center text-base">
           <p>&copy;{new Date().getFullYear()} SLK Hana Ola, LLC | All Rights Reserved</p>
           <p>Designed and Hosted by <a href="https://hanteck.online" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Hanteck</a></p>
         </div>

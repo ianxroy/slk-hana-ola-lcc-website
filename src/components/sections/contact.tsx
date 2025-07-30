@@ -83,7 +83,7 @@ export function ContactSection() {
                   height="100%"
                   frameBorder="0"
                   style={{ border: 0 }}
-                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=21.399840439194396,-158.02250355092343`}
+                  src={`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=94-1161+HeaHea+Street,Waipahu,HI+96797`}
                   allowFullScreen
                 ></iframe>
               ) : (
