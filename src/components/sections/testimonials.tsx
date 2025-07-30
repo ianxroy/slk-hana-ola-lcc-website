@@ -2,8 +2,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
-import { db } from "@/lib/firebase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
@@ -20,8 +18,14 @@ interface Testimonial {
   quote: string;
   rating: number;
   image?: string;
-  createdAt: Timestamp;
 }
+
+// Hardcoded testimonials since Firestore is removed
+const testimonialsData: Testimonial[] = [
+    { id: '1', name: 'John D.', quote: 'Excellent and compassionate care. They treated my mother like family.', rating: 5, image: 'https://placehold.co/100x100.png' },
+    { id: '2', name: 'Jane S.', quote: 'The caregivers are professional, punctual, and very caring. Highly recommended.', rating: 5, image: 'https://placehold.co/100x100.png' },
+    { id: '3', name: 'Mike R.', quote: 'A great service that gave our family peace of mind. Thank you!', rating: 4, image: 'https://placehold.co/100x100.png' }
+];
 
 type TestimonialsSectionProps = {
     isPreview?: boolean;
@@ -31,25 +35,13 @@ export function TestimonialsSection({ isPreview = false }: TestimonialsSectionPr
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchTestimonials = useCallback(async () => {
-        setIsLoading(true);
-        try {
-          const testimonialsCollection = collection(db, 'testimonials');
-          const q = query(testimonialsCollection, orderBy('createdAt', 'desc'));
-          const testimonialSnapshot = await getDocs(q);
-          const testimonialsList = testimonialSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial));
-          setTestimonials(testimonialsList);
-        } catch (error) {
-          console.error("Error fetching testimonials:", error);
-          // Don't show toast to avoid bothering non-admin users
-        } finally {
-          setIsLoading(false);
-        }
-    }, []);
-
     useEffect(() => {
-        fetchTestimonials();
-    }, [fetchTestimonials]);
+        // Simulate fetching data
+        setTimeout(() => {
+            setTestimonials(testimonialsData);
+            setIsLoading(false);
+        }, 500);
+    }, []);
 
     const displayedTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
 
