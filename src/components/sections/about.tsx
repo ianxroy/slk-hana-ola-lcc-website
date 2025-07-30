@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function AboutSection() {
     return (
@@ -24,16 +26,43 @@ export function AboutSection() {
                        </p>
                    </div>
                    
-                   <div className="space-y-6">
-                        <div>
-                            <h3 className="font-headline text-2xl font-bold text-secondary">OUR MISSION</h3>
-                            <p className="mt-2">To respectfully and compassionately meet the needs of our clients and their families by listening, planning, educating and delivering the highest quality of individualized home healthcare.</p>
-                        </div>
-                        <div>
-                            <h3 className="font-headline text-2xl font-bold text-secondary">OUR VISION</h3>
-                            <p className="mt-2">Our strategic vision is to create and sustain a leading high quality home care service that supports individuals to live as independently as possible in the comfort of their own homes.</p>
-                            <p className="mt-2">We personalize our services to meet your situation respectfully, efficiently, and compassionately, fostering independence, preserving dignity and improving quality of life.</p>
-                        </div>
+                   <div className="mt-12 grid gap-8 md:grid-cols-2">
+                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                            <CardHeader>
+                                <div className="overflow-hidden rounded-t-lg">
+                                    <Image 
+                                        src="https://placehold.co/600x400.png"
+                                        alt="Our Mission"
+                                        width={600}
+                                        height={400}
+                                        className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        data-ai-hint="compassionate caregiver"
+                                    />
+                                </div>
+                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4">OUR MISSION</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-left">To respectfully and compassionately meet the needs of our clients and their families by listening, planning, educating and delivering the highest quality of individualized home healthcare.</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="group overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-2xl">
+                             <CardHeader>
+                                <div className="overflow-hidden rounded-t-lg">
+                                    <Image 
+                                        src="https://placehold.co/600x400.png"
+                                        alt="Our Vision"
+                                        width={600}
+                                        height={400}
+                                        className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        data-ai-hint="independent senior"
+                                    />
+                                </div>
+                                <CardTitle className="font-headline text-2xl font-bold text-secondary pt-4">OUR VISION</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-left">Our strategic vision is to create and sustain a leading high quality home care service that supports individuals to live as independently as possible in the comfort of their own homes. We personalize our services to meet your situation respectfully, efficiently, and compassionately, fostering independence, preserving dignity and improving quality of life.</p>
+                            </CardContent>
+                        </Card>
                    </div>
 
                    <p className="text-xl font-bold text-primary pt-6">
