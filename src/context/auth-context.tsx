@@ -29,27 +29,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
       if (firebaseUser) {
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-           const userData = userDoc.data();
-           // Only set user if they are approved
-           if (userData.status === 'approved') {
-               setUser({
-                uid: firebaseUser.uid,
-                email: firebaseUser.email,
-                role: userData.role || 'employee',
-                status: userData.status
-              });
-           } else {
-             // User is pending or rejected, sign them out client-side
-             auth.signOut();
-             setUser(null);
-           }
-        } else {
-          // Handle case where user exists in Auth but not in Firestore
-          auth.signOut();
-          setUser(null);
+        try {
+            const userDocRef = doc(db, 'users', firebaseUser.uid);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // Only set user if they are approved
+            if (userData.status === 'approved') {
+                setUser({
+                    uid: firebaseUser.uid,
+                    email: firebaseUser.email,
+                    role: userData.role || 'employee',
+                    status: userData.status
+                });
+            } else {
+                // User is pending or rejected, sign them out client-side
+                await auth.signOut();
+                setUser(null);
+            }
+            } else {
+            // Handle case where user exists in Auth but not in Firestore
+            await auth.signOut();
+            setUser(null);
+            }
+        } catch (error) {
+            console.error("Failed to fetch user document, possibly due to network issues:", error);
+            // If we can't fetch the doc (e.g., offline), sign out to prevent inconsistent state
+            await auth.signOut();
+            setUser(null);
         }
       } else {
         setUser(null);
@@ -87,5 +94,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
