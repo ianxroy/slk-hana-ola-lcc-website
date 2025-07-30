@@ -17,6 +17,12 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const commonScrollTrigger = {
+        start: 'top 80%', // Start animation when element top hits 80% from viewport top
+        end: 'bottom 20%', // End animation when element bottom hits 20% from viewport top
+        toggleActions: 'play reverse play reverse',
+      };
+      
       // Animate single elements
       const animatedElements = gsap.utils.toArray<HTMLElement>('.animate-fade-in-up');
       animatedElements.forEach((el) => {
@@ -30,9 +36,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
             ease: 'power3.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
-              end: 'top 15%',
-              toggleActions: 'play reverse play reverse',
+              ...commonScrollTrigger
             },
           }
         );
@@ -53,9 +57,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
                stagger: 0.2,
                scrollTrigger: {
                  trigger: container,
-                 start: 'top 85%',
-                 end: 'top 15%',
-                 toggleActions: 'play reverse play reverse',
+                 ...commonScrollTrigger
                },
              }
           )
@@ -73,9 +75,7 @@ export function GsapScrollAnimator({ children }: GsapScrollAnimatorProps) {
                 ease: 'power3.out',
                 scrollTrigger: {
                     trigger: el,
-                    start: 'top 90%',
-                    end: 'top 10%',
-                    toggleActions: 'play reverse play reverse',
+                    ...commonScrollTrigger
                 },
             });
         });
