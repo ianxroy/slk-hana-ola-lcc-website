@@ -14,7 +14,7 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
         {
             title: "Personal Care Services",
             description: "Personal care services shall include activities based on the assessment of the clients’ needs, including but not limited to: personal hygiene and grooming; bathing; skin care; oral hygiene; hair care; dressing; assistance with ambulation, mobility, transfers, and positioning; and assistance with exercise and range of motion.",
-            image: "https://placehold.co/600x400.png",
+            image: "https://images.unsplash.com/photo-1551821719-b1e457588349?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb25hbCUyMGh5Z2llbmV8ZW58MHx8fHwxNzUzOTUyMDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "personal hygiene"
         },
         {
@@ -26,13 +26,13 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
         {
             title: "Assistance With Daily Living",
             description: "We provide support with daily activities to help our clients maintain their independence and quality of life at home.",
-            image: "https://placehold.co/600x400.png",
+            image: "https://images.unsplash.com/photo-1723433892471-62f113c8c9a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhc3Npc3RhbmNlJTIwd2l0aCUyMGRhaWx5JTIwbGl2aW5nfGVufDB8fHx8MTc1Mzk1MTg2OXww&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "helping elderly"
         },
         {
             title: "Companionship",
             description: "Our caregivers offer companionship and emotional support, engaging in activities that our clients enjoy and ensuring they feel connected.",
-            image: "https://placehold.co/600x400.png",
+            image: "https://images.unsplash.com/photo-1461532257246-777de18cd58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb21wYW5pb25zaGlwfGVufDB8fHx8MTc1Mzk1MTg4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "happy friends"
         }
     ];
