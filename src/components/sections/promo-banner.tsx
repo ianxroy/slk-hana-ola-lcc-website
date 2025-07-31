@@ -20,17 +20,6 @@ import React from "react";
 // Mock Data for Promo Banners
 const mockBanners = [
   {
-    id: "1",
-    title: "Now Hiring Caregivers!",
-    description: "Join our team and make a difference in your community. We offer competitive pay and flexible schedules.",
-    cta: "Apply Now",
-    ctaLink: "/employment",
-    badge: "Careers",
-    badgeVariant: "secondary",
-    image: "https://images.unsplash.com/photo-1612277795009-f95f2e8c4a02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjYXJlZ2l2ZXJ8ZW58MHx8fHwxNzUzOTQ5OTE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    imageHint: "caregiver helping elderly"
-  },
-  {
     id: "5",
     title: "We are hiring!",
     description: "We are looking for Male and Female Caregivers and CNA’s who can also drive.",
@@ -40,18 +29,6 @@ const mockBanners = [
     badgeVariant: "secondary",
     image: "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     imageHint: "job hiring"
-  },
-  {
-    id: "2",
-    title: "Free In-Home Consultation",
-    description:
-      "Discover how we can help your loved ones live comfortably and safely at home. Contact us today to schedule a free, no-obligation consultation.",
-    cta: "Contact Us",
-    ctaLink: "/contact",
-    badge: "Limited Time Offer",
-    badgeVariant: "default",
-    image: "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb25zdWx0YXRpb258ZW58MHx8fHwxNzUzOTQ5OTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    imageHint: "friendly consultation"
   },
   {
     id: "3",
@@ -64,12 +41,6 @@ const mockBanners = [
     image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0cnVzdGVkfGVufDB8fHx8MTc1Mzk1MDIxMHww&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "quality seal"
   },
-  {
-    id: "4",
-    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXJlJTIwZ2l2ZXJ8ZW58MHx8fHwxNzUzOTUwMDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    imageHint: "happy family",
-    ctaLink: "/about",
-  }
 ];
 
 export function PromoBanner() {
