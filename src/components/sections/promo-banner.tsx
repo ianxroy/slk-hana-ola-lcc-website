@@ -58,7 +58,7 @@ const mockBanners = [
     title: "BBB Accredited Business",
     description: "We are proud to be a BBB accredited business with an A+ rating, reflecting our commitment to trust and quality care.",
     cta: "Learn More",
-    ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick",
+    ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hanaola-llc-1296-1000152785#sealclick",
     badge: "Trusted",
     badgeVariant: "destructive",
     image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0cnVzdGVkfGVufDB8fHx8MTc1Mzk1MDIxMHww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -98,61 +98,64 @@ export function PromoBanner() {
       aria-labelledby="promo-banner-heading"
     >
         <div className="container mx-auto px-4 md:px-6">
-          <Carousel
-            setApi={setApi}
-            opts={{ loop: true }}
-            plugins={[
-              Autoplay({
-                delay: 5000,
-                stopOnInteraction: true,
-              }),
-            ]}
-            className="group"
-          >
-            <CarouselContent>
-              {mockBanners.map((banner) => {
-                const hasTextContent = banner.title || banner.description || banner.badge;
-                return (
-                    <CarouselItem key={banner.id}>
-                      <div className={cn(
-                        "grid grid-cols-1 items-center gap-8 md:gap-12 h-full",
-                        hasTextContent && "md:grid-cols-2"
-                      )}>
-                        {hasTextContent && (
-                            <div className="space-y-4 text-center md:text-left">
-                                {banner.badge && <Badge variant={banner.badgeVariant as any}>{banner.badge}</Badge>}
-                                {banner.title && <h3 className="font-headline text-3xl md:text-4xl font-bold">{banner.title}</h3>}
-                                {banner.description && <p className="text-lg md:text-xl text-foreground/80">{banner.description}</p>}
-                                {banner.cta && banner.ctaLink && (
-                                    <Button asChild size="lg" className="mt-4">
-                                        <Link href={banner.ctaLink} target={banner.ctaLink.startsWith('http') ? '_blank' : '_self'}>{banner.cta}</Link>
-                                    </Button>
-                                )}
-                            </div>
-                        )}
+          <div className="relative flex items-center justify-center">
+            <Carousel
+              setApi={setApi}
+              opts={{ loop: true }}
+              plugins={[
+                Autoplay({
+                  delay: 5000,
+                  stopOnInteraction: true,
+                }),
+              ]}
+              className="group w-full"
+            >
+              <CarouselContent>
+                {mockBanners.map((banner) => {
+                  const hasTextContent = banner.title || banner.description || banner.badge;
+                  return (
+                      <CarouselItem key={banner.id}>
                         <div className={cn(
-                          "relative overflow-hidden rounded-lg shadow-lg max-h-[300px]",
-                          !hasTextContent && "col-span-full"
+                          "grid grid-cols-1 items-center gap-8 md:gap-12 h-full",
+                          hasTextContent && "md:grid-cols-2"
                         )}>
-                          <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
-                            <Image
-                              src={banner.image}
-                              alt={banner.title || 'Promotional Banner'}
-                              width={1200}
-                              height={300}
-                              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                              data-ai-hint={banner.imageHint}
-                            />
-                           </Link>
+                          {hasTextContent && (
+                              <div className="space-y-4 text-center md:text-left">
+                                  {banner.badge && <Badge variant={banner.badgeVariant as any}>{banner.badge}</Badge>}
+                                  {banner.title && <h3 className="font-headline text-3xl md:text-4xl font-bold">{banner.title}</h3>}
+                                  {banner.description && <p className="text-lg md:text-xl text-foreground/80">{banner.description}</p>}
+                                  {banner.cta && banner.ctaLink && (
+                                      <Button asChild size="lg" className="mt-4">
+                                          <Link href={banner.ctaLink} target={banner.ctaLink.startsWith('http') ? '_blank' : '_self'}>{banner.cta}</Link>
+                                      </Button>
+                                  )}
+                              </div>
+                          )}
+                          <div className={cn(
+                            "relative overflow-hidden rounded-lg shadow-lg",
+                            !hasTextContent && "col-span-full",
+                            "max-h-[300px]"
+                          )}>
+                            <Link href={banner.ctaLink || '#'} target={banner.ctaLink?.startsWith('http') ? '_blank' : '_self'}>
+                              <Image
+                                src={banner.image}
+                                alt={banner.title || 'Promotional Banner'}
+                                width={1200}
+                                height={300}
+                                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={banner.imageHint}
+                              />
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    </CarouselItem>
-                )
-              })}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" />
-            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100" />
-          </Carousel>
+                      </CarouselItem>
+                  )
+                })}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+              <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+            </Carousel>
+          </div>
            <div className="mt-4 flex justify-center gap-2">
             {Array.from({ length: count }).map((_, index) => (
                 <button
