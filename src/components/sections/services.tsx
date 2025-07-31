@@ -14,13 +14,13 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
         {
             title: "Personal Care Services",
             description: "Personal care services shall include activities based on the assessment of the clients’ needs, including but not limited to: personal hygiene and grooming; bathing; skin care; oral hygiene; hair care; dressing; assistance with ambulation, mobility, transfers, and positioning; and assistance with exercise and range of motion.",
-            image: "https://images.unsplash.com/photo-1551821719-b1e457588349?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb25hbCUyMGh5Z2llbmV8ZW58MHx8fHwxNzUzOTUyMDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+            image: "https://images.unsplash.com/photo-1658314755707-1fbdf7c40145?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXJlZ2l2ZXJ8ZW58MHx8fHwxNzUzOTQ5OTE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "personal hygiene"
         },
         {
             title: "Homemaker Services",
             description: "Homemaker services shall be provided by personal care aides or homemakers and shall include activities based on the assessment of the clients’ needs, including but not limited to: routine and light house cleaning; care of clothing and linens; shopping for household supplies; clothing and personal essentials; running errands or picking up medication; shopping for food or preparing meals; escorting the client to medical care services or to nutritional or recreational programs; and assisting with simple health care routines such as reminders to take oral medication; to maintain diet restrictions or to perform recommended exercises.",
-            image: "https://images.unsplash.com/photo-1625489409904-324a5e9591e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxob21lbWFrZXIlMjBzZXJ2aWNlc3xlbnwwfHx8fDE3NTM5NTE4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+            image: "https://images.unsplash.com/photo-1595023986775-e3e9ce35ca2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjYXJlZ2l2ZXJ8ZW58MHx8fHwxNzUzOTQ5OTE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "clean house"
         },
         {
