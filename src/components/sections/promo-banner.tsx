@@ -27,7 +27,7 @@ const mockBanners = [
     ctaLink: "/employment",
     badge: "Careers",
     badgeVariant: "secondary",
-    image: "https://placehold.co/1200x300.png",
+    image: "https://images.unsplash.com/photo-1612277795009-f95f2e8c4a02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjYXJlZ2l2ZXJ8ZW58MHx8fHwxNzUzOTQ5OTE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "caregiver helping elderly"
   },
   {
@@ -39,7 +39,7 @@ const mockBanners = [
     ctaLink: "/contact",
     badge: "Limited Time Offer",
     badgeVariant: "default",
-    image: "https://placehold.co/1200x300.png",
+    image: "https://images.unsplash.com/photo-1562564055-71e051d33c19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb25zdWx0YXRpb258ZW58MHx8fHwxNzUzOTQ5OTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "friendly consultation"
   },
   {
@@ -50,12 +50,12 @@ const mockBanners = [
     ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick",
     badge: "Trusted",
     badgeVariant: "destructive",
-    image: "https://placehold.co/1200x300.png",
+    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxxdWFsaXR5JTIwc2VhbHxlbnwwfHx8fDE3NTM5NTAwMTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "quality seal"
   },
   {
     id: "4",
-    image: "https://placehold.co/1200x300.png",
+    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXJlJTIwZ2l2ZXJ8ZW58MHx8fHwxNzUzOTUwMDM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "happy family",
     ctaLink: "/about",
   }
