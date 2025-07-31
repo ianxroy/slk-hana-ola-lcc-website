@@ -31,6 +31,17 @@ const mockBanners = [
     imageHint: "caregiver helping elderly"
   },
   {
+    id: "5",
+    title: "We are hiring!",
+    description: "We are looking for Male and Female Caregivers and CNA’s who can also drive.",
+    cta: "Apply Now",
+    ctaLink: "/employment",
+    badge: "Careers",
+    badgeVariant: "secondary",
+    image: "https://images.unsplash.com/photo-1542744095-291d1f67b221?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    imageHint: "job hiring"
+  },
+  {
     id: "2",
     title: "Free In-Home Consultation",
     description:
