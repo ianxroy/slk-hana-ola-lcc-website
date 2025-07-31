@@ -50,7 +50,7 @@ const mockBanners = [
     ctaLink: "https://www.bbb.org/us/hi/waipahu/profile/home-care/slk-hana-ola-llc-1296-1000152785#sealclick",
     badge: "Trusted",
     badgeVariant: "destructive",
-    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxxdWFsaXR5JTIwc2VhbHxlbnwwfHx8fDE3NTM5NTAwMTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0cnVzdGVkfGVufDB8fHx8MTc1Mzk1MDIxMHww&ixlib=rb-4.1.0&q=80&w=1080",
     imageHint: "quality seal"
   },
   {
