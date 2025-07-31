@@ -20,7 +20,7 @@ export function ServicesSection({ isPreview = false }: ServicesSectionProps) {
         {
             title: "Homemaker Services",
             description: "Homemaker services shall be provided by personal care aides or homemakers and shall include activities based on the assessment of the clients’ needs, including but not limited to: routine and light house cleaning; care of clothing and linens; shopping for household supplies; clothing and personal essentials; running errands or picking up medication; shopping for food or preparing meals; escorting the client to medical care services or to nutritional or recreational programs; and assisting with simple health care routines such as reminders to take oral medication; to maintain diet restrictions or to perform recommended exercises.",
-            image: "https://placehold.co/600x400.png",
+            image: "https://images.unsplash.com/photo-1625489409904-324a5e9591e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxob21lbWFrZXIlMjBzZXJ2aWNlc3xlbnwwfHx8fDE3NTM5NTE4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
             imageHint: "clean house"
         },
         {
